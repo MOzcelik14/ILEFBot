@@ -1,599 +1,364 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
-<link rel="icon" href="https://i.hizliresim.com/ar4mbl6.png" type="image/x-icon" />
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>İLEFBot</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<style>
-* {margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;}
-body {background: linear-gradient(135deg,#0f2027,#203a43,#2c5364);color:#fff;min-height:100vh;display:flex;justify-content:center;align-items:center;padding:20px;transition: background 0.3s, color 0.3s;}
-body.light {background: linear-gradient(135deg,#f0f0f0,#d0d0d0,#b0b0b0);color:#111;}
-.app-container {display:flex;width:95%;max-width:1400px;height:85vh;background: rgba(15,25,35,0.9);border-radius:15px;box-shadow:0 10px 30px rgba(0,0,0,0.5);overflow:hidden;backdrop-filter:blur(10px);border:1px solid rgba(100,200,255,0.2);transition: background 0.3s, color 0.3s;}
-body.light .app-container {background: rgba(255,255,255,0.9);color:#111;border:1px solid rgba(0,0,0,0.2);}
-.sidebar {width:280px;background:rgba(10,25,40,0.8);border-right:1px solid rgba(100,200,255,0.2);display:flex;flex-direction:column;transition: background 0.3s;}
-body.light .sidebar {background:rgba(240,240,240,0.9);border-right:1px solid rgba(0,0,0,0.2);}
-.sidebar-header {padding:20px;display:flex;align-items:center;border-bottom:1px solid rgba(100,200,255,0.2);}
-.sidebar-header img {width:120px;filter: brightness(0) invert(1);margin-right:10px;}
-body.light .sidebar-header img {filter: brightness(0);}
-.new-chat-btn {margin:15px;padding:12px;background: linear-gradient(135deg,#00b894,#0984e3);color:white;border:none;border-radius:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;font-weight:500;transition: all 0.3s ease;}
-.new-chat-btn:hover {transform:translateY(-2px);box-shadow:0 6px 15px rgba(0,184,148,0.4);}
-.chat-history {flex:1;overflow-y:auto;padding:10px;}
-.chat-item {padding:12px 15px;margin-bottom:8px;border-radius:10px;cursor:pointer;transition: background 0.2s;}
-.chat-item:hover {background: rgba(100,200,255,0.1);}
-.chat-item.active {background: rgba(0,180,148,0.2);}
-.chat-item-title {font-weight:500;margin-bottom:5px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;}
-.chat-item-preview {font-size:12px;color: rgba(255,255,255,0.6);white-space: nowrap;overflow: hidden;text-overflow: ellipsis;}
-body.light .chat-item-preview {color: rgba(0,0,0,0.6);}
-.chat-main {flex:1;display:flex;flex-direction:column;}
-.chat-header {background: linear-gradient(90deg,#0a3d62,#079992);color:white;padding:15px 20px;font-weight:bold;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(100,200,255,0.2);}
-body.light .chat-header {background: linear-gradient(90deg,#ccc,#eee);color:#111;border-bottom:1px solid rgba(0,0,0,0.2);}
-.chat-title {display:flex;align-items:center;gap:10px;}
-.chat-actions button {background: transparent;border:none;color:white;cursor:pointer;padding:6px 10px;border-radius:6px;transition: background 0.2s;}
-.chat-actions button:hover {background: rgba(255,255,255,0.1);}
-body.light .chat-actions button {color:#111;}
-#chat-messages {flex:1;overflow-y:auto;padding:20px;background: linear-gradient(135deg,#0f2027,#203a43,#2c5364);word-wrap:break-word;}
-body.light #chat-messages {background: linear-gradient(135deg,#f0f0f0,#d0d0d0,#b0b0b0);}
-.message {margin-bottom:20px;display:flex;}
-.user-message {justify-content:flex-end;}
-.bot-message {justify-content:flex-start;}
-.message-content {max-width:70%;padding:12px 18px;border-radius:18px;color:white;font-family:'Consolas','Monaco','Courier New',monospace;font-size:14px;line-height:1.4;word-wrap:break-word;}
-body.light .message-content {color:#111;}
-.user-message .message-content {background: linear-gradient(135deg,#0984e3,#00cec9);border-bottom-right-radius:5px;}
-body.light .user-message .message-content {background: linear-gradient(135deg,#a0c4ff,#90e0ef);}
-.bot-message .message-content {background: linear-gradient(135deg,#00b894,#00a896);border-bottom-left-radius:5px;}
-body.light .bot-message .message-content {background: linear-gradient(135deg,#b9fbc0,#99e9d9);}
-.timestamp {font-size:11px;color: rgba(255,255,255,0.5);margin-top:5px;text-align:right;}
-body.light .timestamp {color: rgba(0,0,0,0.5);}
-#chat-input {display:flex;padding:20px;border-top:1px solid rgba(100,200,255,0.2);background: rgba(15,30,45,0.9);}
-body.light #chat-input {background: rgba(255,255,255,0.9);}
-#user-input {flex-grow:1;padding:14px 20px;border:1px solid rgba(100,200,255,0.2);border-radius:25px;outline:none;background: rgba(10,30,50,0.7);color:#fff;font-size:15px;}
-body.light #user-input {background:#fff;color:#111;border:1px solid rgba(0,0,0,0.2);}
-#user-input::placeholder {color: rgba(200,230,255,0.5);}
-body.light #user-input::placeholder {color: rgba(100,100,100,0.5);}
-#send-button {background: linear-gradient(135deg,#00b894,#0984e3);color:white;border:none;border-radius:50%;width:50px;height:50px;margin-left:12px;cursor:pointer;display:flex;justify-content:center;align-items:center;transition:all 0.3s ease;}
-#send-button:hover {transform:translateY(-2px);box-shadow:0 6px 15px rgba(0,184,148,0.5);}
-.typing-indicator {display:inline-block;padding:12px 18px;background-color: rgba(0,180,148,0.2);border-radius:18px;border-bottom-left-radius:5px;font-family:'Consolas','Monaco','Courier New',monospace;}
-.typing-indicator span {height:8px;width:8px;background-color:#00b894;border-radius:50%;display:inline-block;margin:0 2px;animation:bounce 1.5s infinite ease-in-out;}
-.typing-indicator span:nth-child(2) {animation-delay:0.2s;}
-.typing-indicator span:nth-child(3) {animation-delay:0.4s;}
-@keyframes bounce {0%,60%,100%{transform:translateY(0);}30%{transform:translateY(-5px);}}
-.tech-border {position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:-1;border-radius:15px;box-shadow:0 0 20px rgba(0,180,148,0.3),0 0 40px rgba(9,132,227,0.2),inset 0 0 15px rgba(100,200,255,0.1);}
-.corner {position:absolute;width:15px;height:15px;border:2px solid #00cec9;border-radius:3px;}
-#chat-messages::-webkit-scrollbar,.chat-history::-webkit-scrollbar{width:6px;}
-#chat-messages::-webkit-scrollbar-track,.chat-history::-webkit-scrollbar-track{background:rgba(0,0,0,0.1);border-radius:10px;}
-#chat-messages::-webkit-scrollbar-thumb,.chat-history::-webkit-scrollbar-thumb{background:linear-gradient(45deg,#00b894,#0984e3);border-radius:10px;}
-@media (max-width:900px){.app-container{flex-direction:column;height:90vh;}.sidebar{width:100%;height:180px;border-right:none;border-bottom:1px solid rgba(100,200,255,0.2);}.chat-history{display:flex;overflow-x:auto;flex-wrap:nowrap;padding:10px 5px;}.chat-item{min-width:160px;margin-right:8px;margin-bottom:0;}}
-#search-input {margin:10px 15px;padding:8px 12px;border-radius:8px;border:none;outline:none;font-size:14px;background: rgba(10,30,50,0.7);color:#fff;}
-body.light #search-input{background:#eee;color:#111;}
-.short-replies {display:flex;gap:8px;padding:10px;flex-wrap:wrap;}
-.short-replies button {padding:6px 12px;border:none;border-radius:20px;cursor:pointer;background:#0984e3;color:white;transition:0.2s;}
-.short-replies button:hover {background:#00cec9;}
-body.light .short-replies button{background:#90e0ef;color:#111;}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  @media (max-width:900px){
-    .app-container {
-        flex-direction: column;
-        height: 100vh;
-    }
+    <title>İLEFBot — Bakımda</title>
 
-    .sidebar {
-        width: 100%;
-        height: auto; 
-        min-height: 100px;
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-        border-right: none;
-        border-bottom: 1px solid rgba(100,200,255,0.2);
-        padding: 5px;
-        box-sizing: border-box;
-    }
-
-    .sidebar-header {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        margin-bottom: 5px;
-    }
-
-    #search-input {
-        flex: 1;
-        font-size: 13px;
-        padding: 6px 10px;
-        margin-left: 5px;
-    }
-
-    .new-chat-btn {
-        padding: 8px 10px;
-        font-size: 12px;
-        margin: 0;
-        flex-shrink: 0;
-    }
-
-    .sidebar-header, .new-chat-btn, #search-input {
-        display: flex;
-        align-items: center;
-    }
-
-    .chat-history {
-        display: flex;
-        flex-direction: row;
-        overflow-x: auto;
-        flex-wrap: nowrap;
-        gap: 6px;
-        padding: 5px 0;
-        height: 50px; 
-        box-sizing: border-box;
-    }
-
-    .chat-item {
-        min-width: 120px;
-        max-width: 120px;
-        flex: 0 0 120px;
-        font-size: 12px;
-        padding: 6px 8px;
-        border-radius: 8px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        overflow: hidden;
-    }
-
-    .chat-item-title,
-    .chat-item-preview {
-        display: block;
-        width: 100%;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
-    .chat-main {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        min-height: 0; 
-    }
-
-    #chat-messages {
-        flex: 1;
-        overflow-y: auto;
-        padding: 10px;
-    }
-
-    #chat-input {
-        flex-shrink: 0;
-        width: 100%;
-        padding: 8px 10px;
-        box-sizing: border-box;
-    }
-}
-
-  
-</style>
-</head>
-<body>
-<div class="app-container">
-<div class="tech-border"></div>
-<div class="sidebar">
-<div class="sidebar-header">
-<img src="https://i.hizliresim.com/oob1eqi.png" alt="İLEF Logo">
-<span></span>
-</div>
-<button class="new-chat-btn" id="new-chat-btn"><i class="fas fa-plus"></i> Yeni Sohbet</button>
-<input type="text" id="search-input" placeholder="Sohbet ara...">
-<div class="chat-history" id="chat-history"></div>
-</div>
-<div class="chat-main">
-<div class="chat-header">
-<div class="chat-title"><i class="fas fa-comment-dots"></i><span id="current-chat-title">Hoş Geldiniz</span></div>
-<div class="chat-actions">
-<button id="clear-chat" title="Sohbeti Temizle"><i class="fas fa-broom"></i></button>
-<button id="theme-toggle" title="Tema Değiştir"><i class="fas fa-adjust"></i></button>
-</div>
-</div>
-<div id="chat-messages"></div>
-<div class="short-replies" id="short-replies"></div>
-<div id="chat-input"><input type="text" id="user-input" placeholder="Bir mesaj yazın..." autocomplete="off"><button id="send-button"><i class="fas fa-paper-plane"></i></button></div>
-</div>
-</div>
-
-<script>
-
-const SYSTEM_INSTRUCTION={role:"model",parts:[{
-                text: "Bolu Abant İzzet Baysal Üniversitesi İletişim Fakültesi'nin yapay zeka asistanı İLEFBot'sun. Amacın insanlara istedikleri konuda araştırma yapıp yardımcı olmak, gerektiği zaman internetten faydalanacaksın, öğrencilere yardımcı olmak, fakültedeki etkinlikleri öğrencilere aktarmak, sınav takvimlerini öğrencilere aktarmak, daha sonrasında çalışmalarında, ödevlerinde veya ders programı, ders kaydı, üniversite bilgi yönetim sistemi (übys, web adresi ubys.ibu.edu.tr) gibi çeşitli konularda onlara yardım etmek. İletişim veya medyayla alakalı soruları asla cevapsız bırakma. Sadece fakülteyle kısıtlı kalmana gerek yok. Diğer sorularında da insanlara yardımcı olabilirsin. SEN SADECE İLEFBot'SUN, başka hiçbirşey olamazsın. Senle başka dillerde konuşulduğunda o dillerde konuşabilirsin, tüm yanıtları Türkçe vermene gerek yok. Dekanımız Prof. Dr. Emre Tandırlı'dır. 1977 yılında İstanbul’da doğdu. Mimar Sinan Üniversitesi Güzel Sanatlar Fakültesi Resim Bölümü’nü bitirdikten sonra yüksek lisansını da aynı üniversitede yaptı. Paris I Pantheon Sorbonne Üniversitesi Plastik Sanatlar Bölümüne ikinci bir yüksek lisans eğitiminin hemen ardından aynı üniversitede Sanat Bilimleri alanında doktorasını tamamlamıştır. Bu yazılımı hazırlayan Murat Özçelik ise şuan da fakültemizin Radyo, Televizyon ve Sinema bölümü 3. sınıfında eğitimini sürdürmektedir. Kendisi Profilo Mesleki ve Teknik Anadolu Lisesi Bilişim Teknolojileri Alanı Veritabanı Programcılığı dalı mezunudur. Rektörümüz ise Prof. Dr. Faruk Yiğit'tir. Şuan 2025-2026 eğitim-öğretim yılındayız. Ders programı hakkında soru sorulduğunda kullanıcıları bu adrese yönlendirebilirsin https://ilef.ibu.edu.tr/tr/news-detail/2025-2026-akademik-yil-bahar-donemi-haftalik-ders-programlari/19751, akademik takvim konusunda soru sorulduğunda yardımcı olabilirsin. Sana Eren dendiğinde AVANSI VERDİN Mİ KARDEŞ? diyeceksin. Sana Memo dendiğinde yalan amk. diyeceksin. Sana Işık dendiğinde ise saçı üçe vurmak hakkında konuş. Sana dodo dendiğinde Dolunay'ın Murat'ın en iyi arkadaşlarından olduğunu belirt, ama sadece dodo dendiğinde. Sana gadir dendiğinde ise Ölene dek GGAMG! diye yanıt ver. Sana Koray dendiğinde kelleşme için çözümler anlat. Sana Kübra dendiğinde gazetecilik tarihi hakkında kısa bilgiler ver."
-}]};
-
-// LocalStorage'dan sohbetleri yükle
-let savedChats = localStorage.getItem('ilefbot_chats');
-let chats = savedChats ? JSON.parse(savedChats) : {};
-
-// Eğer hiç sohbet yoksa varsayılan bir sohbet oluştur
-let currentChatId;
-if (Object.keys(chats).length === 0) {
-    currentChatId = 'chat-' + Date.now();
-    chats[currentChatId] = {title:'Hoş Geldiniz', messages:[{sender:'bot', text:'Merhaba! Size nasıl yardımcı olabilirim?', timestamp:new Date()}]};
-} else {
-    // En son aktif olan sohbeti bul (son mesajı en yeni olanı seçebiliriz, basitçe ilkini alalım)
-    currentChatId = Object.keys(chats)[0];
-}
-
-// LocalStorage'a kaydet
-function saveChatsToLocalStorage() {
-    localStorage.setItem('ilefbot_chats', JSON.stringify(chats));
-}
-
-document.addEventListener('DOMContentLoaded',function(){
-const chatMessages=document.getElementById('chat-messages');
-const userInput=document.getElementById('user-input');
-const sendButton=document.getElementById('send-button');
-const newChatBtn=document.getElementById('new-chat-btn');
-const clearChatBtn=document.getElementById('clear-chat');
-const chatHistory=document.getElementById('chat-history');
-const currentChatTitle=document.getElementById('current-chat-title');
-const themeToggle=document.getElementById('theme-toggle');
-const searchInput=document.getElementById('search-input');
-const shortReplies=document.getElementById('short-replies');
-
-// Sohbeti TXT olarak indirme butonu ekle
-const downloadTxtBtn = document.createElement('button');
-downloadTxtBtn.innerHTML = '<i class="fas fa-download"></i>';
-downloadTxtBtn.title = 'Sohbeti TXT olarak indir';
-downloadTxtBtn.addEventListener('click', downloadChatAsTxt);
-document.querySelector('.chat-actions').appendChild(downloadTxtBtn);
-
-const SHORT_MESSAGES=["Teşekkürler","Evet","Hayır","Anlamadım","Daha fazla detay"];
-
-function renderShortReplies(){
-shortReplies.innerHTML='';
-SHORT_MESSAGES.forEach(msg=>{
-const btn=document.createElement('button');
-btn.textContent=msg;
-btn.addEventListener('click',()=>{userInput.value=msg;userInput.focus();});
-shortReplies.appendChild(btn);
-});
-}
-renderShortReplies();
-
-// Tema değiştirme
-themeToggle.addEventListener('click',()=>{document.body.classList.toggle('light');});
-
-// Sohbet arama
-searchInput.addEventListener('input',()=>{
-const filter=searchInput.value.toLowerCase();
-document.querySelectorAll('.chat-item').forEach(item=>{
-item.style.display= item.textContent.toLowerCase().includes(filter)?'flex':'none';
-});
-if(filter===''){renderChatHistory(); loadChat(currentChatId);}
-});
-
-// Yeni sohbet
-newChatBtn.addEventListener('click',startNewChat);
-clearChatBtn.addEventListener('click',clearCurrentChat);
-
-function sendMessage(){
-const message=userInput.value.trim();
-if(message==='')return;
-addMessage(message,'user');
-userInput.value='';
-if(chats[currentChatId].messages.length===1) updateChatTitle(message);
-showTypingIndicator();
-fetchGeminiResponse(message);
-}
-userInput.addEventListener('keypress',e=>{if(e.key==='Enter')sendMessage();});
-sendButton.addEventListener('click',sendMessage);
-
-// Kullanıcı mesajı ekleme (anında)
-function addMessage(text, sender) {
-    const messageDiv = document.createElement('div');
-    messageDiv.className = `message ${sender}-message`;
-    
-    const contentDiv = document.createElement('div');
-    contentDiv.className = 'message-content';
-    
-    if (sender === 'bot') {
-        contentDiv.innerHTML = marked.parse(text);
-    } else {
-        contentDiv.textContent = text;
-    }
-    
-    const timestamp = document.createElement('div');
-    timestamp.className = 'timestamp';
-    timestamp.textContent = formatTime(new Date());
-    
-    contentDiv.appendChild(timestamp);
-    messageDiv.appendChild(contentDiv);
-    chatMessages.appendChild(messageDiv);
-    
-    chats[currentChatId].messages.push({ sender: sender, text: text, timestamp: new Date() });
-    saveChatsToLocalStorage();
-    
-    chatMessages.scrollTop = chatMessages.scrollHeight;
-    
-    // Kullanıcı mesajı eklendiyse regenerate butonunu güncelle
-    if (sender === 'user') {
-        addRegenerateButton();
-    }
-}
-
-// Streaming ile bot mesajı ekleme
-async function streamBotMessage(fullText) {
-    removeTypingIndicator();
-    
-    const messageDiv = document.createElement('div');
-    messageDiv.className = 'message bot-message';
-    
-    const contentDiv = document.createElement('div');
-    contentDiv.className = 'message-content';
-    contentDiv.style.position = 'relative'; // copy butonu için
-    
-    // Timestamp (önce boş ekleyip sonra dolduracağız)
-    const timestamp = document.createElement('div');
-    timestamp.className = 'timestamp';
-    timestamp.textContent = formatTime(new Date());
-    
-    messageDiv.appendChild(contentDiv);
-    chatMessages.appendChild(messageDiv);
-    
-    // Karakter karakter yazma
-    let currentText = '';
-    for (let i = 0; i < fullText.length; i++) {
-        currentText += fullText[i];
-        contentDiv.innerHTML = currentText.replace(/\n/g, '<br>'); // satır sonlarını <br> yap
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-        await new Promise(resolve => setTimeout(resolve, 5));
-    }
-    
-    // Tamamlandı, Markdown'ı işle
-    contentDiv.innerHTML = marked.parse(fullText);
-    contentDiv.appendChild(timestamp);
-    
-    // Copy butonunu ekle
-    addCopyButton(contentDiv, fullText);
-    
-    chats[currentChatId].messages.push({ sender: 'bot', text: fullText, timestamp: new Date() });
-    saveChatsToLocalStorage();
-    
-    chatMessages.scrollTop = chatMessages.scrollHeight;
-}
-
-// Copy butonu ekleme (mesaj balonunun içinde sağ üstte)
-function addCopyButton(container, messageText) {
-    const copyBtn = document.createElement('button');
-    copyBtn.innerHTML = '📋';
-    copyBtn.title = 'Mesajı kopyala';
-    copyBtn.style.position = 'absolute';
-    copyBtn.style.top = '5px';
-    copyBtn.style.right = '5px';
-    copyBtn.style.background = 'transparent';
-    copyBtn.style.border = 'none';
-    copyBtn.style.cursor = 'pointer';
-    copyBtn.style.fontSize = '16px';
-    copyBtn.style.opacity = '0.6';
-    copyBtn.style.transition = 'opacity 0.2s';
-    copyBtn.style.zIndex = '5';
-    copyBtn.addEventListener('mouseenter', () => copyBtn.style.opacity = '1');
-    copyBtn.addEventListener('mouseleave', () => copyBtn.style.opacity = '0.6');
-    copyBtn.addEventListener('click', () => {
-        navigator.clipboard.writeText(messageText).then(() => {
-            copyBtn.textContent = '✅';
-            setTimeout(() => copyBtn.innerHTML = '📋', 2000);
-        });
-    });
-    
-    container.appendChild(copyBtn);
-}
-
-// Regenerate butonu ekleme (son mesajın altında, ortalanmış)
-function addRegenerateButton() {
-    // Önce varsa eski butonu kaldır
-    const oldBtn = document.getElementById('regenerate-btn');
-    if (oldBtn) oldBtn.remove();
-    
-    const messages = chats[currentChatId].messages;
-    if (messages.length < 2) return; // En az bir kullanıcı ve bot mesajı olmalı
-    
-    // Son mesaj kullanıcı mı kontrol et (regenerate mantığı için)
-    const lastMsg = messages[messages.length - 1];
-    if (lastMsg.sender !== 'user') return;
-    
-    // Butonu oluştur
-    const btn = document.createElement('button');
-    btn.id = 'regenerate-btn';
-    btn.innerHTML = '<i class="fas fa-sync-alt"></i> Yanıtı Yeniden Oluştur';
-    btn.style.display = 'block';
-    btn.style.margin = '10px auto';
-    btn.style.padding = '8px 16px';
-    btn.style.background = 'linear-gradient(135deg,#00b894,#0984e3)';
-    btn.style.color = 'white';
-    btn.style.border = 'none';
-    btn.style.borderRadius = '20px';
-    btn.style.cursor = 'pointer';
-    btn.style.fontSize = '14px';
-    btn.style.transition = 'all 0.3s';
-    btn.style.zIndex = '10';
-    btn.addEventListener('mouseenter', () => btn.style.transform = 'scale(1.05)');
-    btn.addEventListener('mouseleave', () => btn.style.transform = 'scale(1)');
-    btn.addEventListener('click', () => {
-        // Son bot mesajını kaldır (varsa)
-        if (messages[messages.length - 1].sender === 'bot') {
-            messages.pop(); // chats'ten sil
-            chatMessages.removeChild(chatMessages.lastChild); // DOM'dan kaldır
+    <style>
+        :root {
+            --green: #2f7d46;
+            --green-light: #6ca67b;
+            --text: #171917;
+            --muted: #777b78;
+            --border: rgba(30, 40, 32, .08);
         }
-        // Tekrar istek at (son kullanıcı mesajı ile)
-        const lastUserMsg = messages[messages.length - 1].text; // hala user
-        showTypingIndicator();
-        fetchGeminiResponse(lastUserMsg, true);
-    });
-    
-    // Butonu son mesajın hemen altına ekle
-    chatMessages.appendChild(btn);
-}
 
-// BURA DEĞİŞTİ: Artık /api/chat'e istek atıyor ve yanıtı "reply" anahtarıyla bekliyor
-async function fetchGeminiResponse(prompt, isRegenerate = false) {
-    try {
-        const response = await fetch('/api/chat', { 
-            method: 'POST',
-            headers: {'Content-Type':'application/json'},
-            body: JSON.stringify({
-                prompt: prompt, 
-                systemInstruction: SYSTEM_INSTRUCTION.parts[0].text // BURA DEĞİŞTİ: Sadece metni gönderiyoruz
-            }) 
-        });
-        const data = await response.json();
-        removeTypingIndicator();
-        
-        let botReply = '';
-        if (data.reply) { // BURA DEĞİŞTİ: Qwen/OpenRouter uyumlu hale getirildi
-            botReply = data.reply;
-        } else {
-            botReply = "Üzgünüm, bir yanıt oluşturamadım.";
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
-        
-        if (isRegenerate) {
-            // Regenerate butonunu kaldır (yenisi sonra eklenecek)
-            const oldBtn = document.getElementById('regenerate-btn');
-            if (oldBtn) oldBtn.remove();
+
+        html, body {
+            width: 100%;
+            height: 100%;
         }
-        
-        await streamBotMessage(botReply);
-        
-    } catch (error) {
-        console.error('API hatası:', error);
-        removeTypingIndicator();
-        addMessage("Bir hata oluştu, lütfen daha sonra tekrar deneyin.", 'bot');
-    }
-}
 
-function formatTime(date){return date.toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'});}
+        body {
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
 
-function showTypingIndicator(){const typingDiv=document.createElement('div');typingDiv.className='message bot-message';typingDiv.id='typing-indicator';const contentDiv=document.createElement('div');contentDiv.className='typing-indicator';contentDiv.innerHTML='<span></span><span></span><span></span>';typingDiv.appendChild(contentDiv);chatMessages.appendChild(typingDiv);chatMessages.scrollTop=chatMessages.scrollHeight;}
-function removeTypingIndicator(){const typingIndicator=document.getElementById('typing-indicator');if(typingIndicator)typingIndicator.remove();}
+            background:
+                linear-gradient(
+                    rgba(30, 70, 40, .035) 1px,
+                    transparent 1px
+                ),
+                linear-gradient(
+                    90deg,
+                    rgba(30, 70, 40, .035) 1px,
+                    transparent 1px
+                ),
+                #fafbf9;
 
-// Sohbet geçmişi
-function startNewChat(){
-let chatTitle=prompt("Yeni sohbet için bir ad girin:");
-if(!chatTitle||chatTitle.trim()==="")chatTitle="Yeni Sohbet";
-currentChatId='chat-'+Date.now();
-chats[currentChatId]={title:chatTitle,messages:[{sender:'bot',text:'Merhaba! Size nasıl yardımcı olabilirim?',timestamp:new Date()}]};
-saveChatsToLocalStorage();
-renderChatHistory();loadChat(currentChatId);
-}
+            background-size: 48px 48px;
 
-function renderChatHistory(){
-    chatHistory.innerHTML='';
-    for(const chatId in chats){
-        const chat=chats[chatId];
-        const chatItem=document.createElement('div');
-        chatItem.className=`chat-item ${chatId===currentChatId?'active':''}`;
-        chatItem.dataset.chatId=chatId;
-        chatItem.innerHTML=`
-            <div class="chat-item-title">${chat.title}</div>
-            <div class="chat-item-preview">${chat.messages[chat.messages.length-1].text}</div>
-        `;
+            color: var(--text);
+            font-family:
+                Inter,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                sans-serif;
+        }
 
-        chatItem.addEventListener('click',()=>loadChat(chatId));
+        /* Ambient glow */
 
-        const deleteBtn = document.createElement('button');
-        deleteBtn.innerHTML = '<i class="fas fa-trash"></i>';
-        deleteBtn.style.marginLeft = 'auto';
-        deleteBtn.style.background = 'transparent';
-        deleteBtn.style.border = 'none';
-        deleteBtn.style.color = '#ff6b6b';
-        deleteBtn.style.cursor = 'pointer';
-        deleteBtn.style.fontSize = '14px';
-        deleteBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            delete chats[chatId];
-            saveChatsToLocalStorage();
-            renderChatHistory();
-            if(chatId === currentChatId) {
-                const remainingChats = Object.keys(chats);
-                if (remainingChats.length > 0) {
-                    loadChat(remainingChats[0]);
-                } else {
-                    startNewChat();
-                }
+        body::before {
+            content: "";
+            position: fixed;
+            width: 650px;
+            height: 650px;
+            border-radius: 50%;
+
+            background: radial-gradient(
+                circle,
+                rgba(47, 125, 70, .10) 0%,
+                rgba(47, 125, 70, .045) 35%,
+                transparent 70%
+            );
+
+            filter: blur(20px);
+            pointer-events: none;
+        }
+
+        .page {
+            position: relative;
+            z-index: 1;
+
+            width: min(680px, 90vw);
+            text-align: center;
+
+            animation: appear .9s cubic-bezier(.2,.8,.2,1);
+        }
+
+        /* Logo */
+
+        .logo-wrap {
+            position: relative;
+
+            width: 148px;
+            height: 148px;
+
+            margin: 0 auto 42px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-wrap::before {
+            content: "";
+
+            position: absolute;
+            inset: -18px;
+
+            border: 1px solid rgba(47, 125, 70, .10);
+            border-radius: 50%;
+
+            animation: pulse 3s ease-in-out infinite;
+        }
+
+        .logo-wrap::after {
+            content: "";
+
+            position: absolute;
+            inset: -34px;
+
+            border: 1px solid rgba(47, 125, 70, .045);
+            border-radius: 50%;
+        }
+
+        .logo {
+            width: 128px;
+            height: 128px;
+
+            object-fit: contain;
+
+            filter:
+                drop-shadow(0 12px 25px rgba(47, 125, 70, .14));
+        }
+
+        /* Text */
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+
+            margin-bottom: 20px;
+
+            color: var(--green);
+
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: .16em;
+            text-transform: uppercase;
+        }
+
+        .eyebrow span {
+            width: 6px;
+            height: 6px;
+
+            border-radius: 50%;
+            background: var(--green);
+
+            box-shadow: 0 0 0 5px rgba(47, 125, 70, .08);
+
+            animation: blink 2s ease-in-out infinite;
+        }
+
+        h1 {
+            font-size: clamp(42px, 7vw, 72px);
+            line-height: .98;
+            letter-spacing: -.055em;
+            font-weight: 650;
+
+            margin-bottom: 22px;
+        }
+
+        h1 strong {
+            color: var(--green);
+            font-weight: inherit;
+        }
+
+        .description {
+            max-width: 510px;
+            margin: 0 auto;
+
+            color: var(--muted);
+
+            font-size: 16px;
+            line-height: 1.7;
+            letter-spacing: -.01em;
+        }
+
+        /* Progress */
+
+        .progress {
+            width: 240px;
+            height: 3px;
+
+            margin: 36px auto 0;
+
+            overflow: hidden;
+
+            border-radius: 999px;
+            background: rgba(47, 125, 70, .10);
+        }
+
+        .progress::before {
+            content: "";
+
+            display: block;
+
+            width: 42%;
+            height: 100%;
+
+            border-radius: inherit;
+            background: var(--green);
+
+            animation: progress 2.4s ease-in-out infinite;
+        }
+
+        /* Footer */
+
+        footer {
+            position: fixed;
+            z-index: 2;
+
+            left: 0;
+            bottom: 30px;
+
+            width: 100%;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+
+            color: #a1a5a2;
+
+            font-size: 11px;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+        }
+
+        footer::before,
+        footer::after {
+            content: "";
+
+            width: 28px;
+            height: 1px;
+
+            background: var(--border);
+        }
+
+        /* Animations */
+
+        @keyframes appear {
+            from {
+                opacity: 0;
+                transform: translateY(18px);
             }
-        });
 
-        chatItem.appendChild(deleteBtn);
-        chatHistory.appendChild(chatItem);
-    }
-}
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
 
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                opacity: .7;
+            }
 
-function loadChat(chatId){
-currentChatId=chatId;
-const chat=chats[chatId];
-currentChatTitle.textContent=chat.title;
-chatMessages.innerHTML='';
-chat.messages.forEach(msg=>{
-const messageDiv=document.createElement('div');messageDiv.className=`message ${msg.sender}-message`;
-const contentDiv=document.createElement('div');contentDiv.className='message-content';
-contentDiv.style.position = 'relative'; // copy butonu için
+            50% {
+                transform: scale(1.04);
+                opacity: 1;
+            }
+        }
 
-if (msg.sender === 'bot') {
-    contentDiv.innerHTML = marked.parse(msg.text);
-    // Copy butonu ekle
-    addCopyButton(contentDiv, msg.text);
-} else {
-    contentDiv.textContent = msg.text;
-}
+        @keyframes blink {
+            0%, 100% {
+                opacity: .45;
+            }
 
-const timestamp=document.createElement('div');timestamp.className='timestamp';timestamp.textContent=formatTime(new Date(msg.timestamp));
-contentDiv.appendChild(timestamp);messageDiv.appendChild(contentDiv);chatMessages.appendChild(messageDiv);
-});
-// Regenerate butonunu kontrol et
-addRegenerateButton();
-chatMessages.scrollTop=chatMessages.scrollHeight;renderChatHistory();
-}
+            50% {
+                opacity: 1;
+            }
+        }
 
-function updateChatTitle(firstMessage){
-const title=firstMessage.length>20?firstMessage.substring(0,20)+'...':firstMessage;
-chats[currentChatId].title=title;currentChatTitle.textContent=title;renderChatHistory();
-saveChatsToLocalStorage();
-}
+        @keyframes progress {
+            0% {
+                transform: translateX(-130%);
+            }
 
-function clearCurrentChat(){
-if(confirm('Sohbet geçmişini temizlemek istediğinize emin misiniz?')){
-chats[currentChatId].messages=[{sender:'bot',text:'Sohbet geçmişi temizlendi. Size nasıl yardımcı olabilirim?',timestamp:new Date()}];
-saveChatsToLocalStorage();
-loadChat(currentChatId);
-}
-}
+            50% {
+                transform: translateX(110%);
+            }
 
-// TXT olarak indir
-function downloadChatAsTxt() {
-    const chat = chats[currentChatId];
-    let content = `Sohbet: ${chat.title}\nTarih: ${new Date().toLocaleString()}\n\n`;
-    chat.messages.forEach(msg => {
-        const sender = msg.sender === 'user' ? 'Kullanıcı' : 'İLEFBot';
-        const time = formatTime(new Date(msg.timestamp));
-        content += `[${time}] ${sender}:\n${msg.text}\n\n`;
-    });
-    
-    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `sohbet_${chat.title}_${Date.now()}.txt`;
-    a.click();
-    URL.revokeObjectURL(url);
-}
+            100% {
+                transform: translateX(280%);
+            }
+        }
 
-// LocalStorage'dan yükleme yapıldı, şimdi arayüzü başlat
-renderChatHistory();loadChat(currentChatId);
-});
+        @media (max-width: 600px) {
+            .logo-wrap {
+                width: 120px;
+                height: 120px;
+                margin-bottom: 34px;
+            }
 
-document.addEventListener('contextmenu', function(e){
-    e.preventDefault();
-});
+            .logo {
+                width: 105px;
+                height: 105px;
+            }
 
-</script>
+            h1 {
+                font-size: 45px;
+            }
+
+            .description {
+                font-size: 15px;
+                padding: 0 10px;
+            }
+
+            footer {
+                bottom: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <main class="page">
+
+        <div class="logo-wrap">
+            <img
+                class="logo"
+                src="https://i.hizliresim.com/ar4mbl6.png"
+                alt="İLEFBot"
+            >
+        </div>
+
+        <div class="eyebrow">
+            <span></span>
+            BAKIMDA
+        </div>
+
+        <h1>
+            İLEFBot<br>
+            <strong>yenileniyor.</strong>
+        </h1>
+
+        <p class="description">
+            Daha iyi bir deneyim için İLEFBot'u baştan geliştiriyoruz.
+            Yeni sürüm üzerinde çalışmalar devam ediyor.
+        </p>
+
+        <div class="progress"></div>
+
+    </main>
+
+    <footer>
+        Murat Özçelik | Bolu Abant İzzet Baysal Üniversitesi İletişim Fakültesi
+    </footer>
+
 </body>
 </html>
