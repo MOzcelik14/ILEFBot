@@ -11,7 +11,12 @@ module.exports = async function handler(req, res) {
     try {if (new URL(origin).host !== host) return res.status(403).json({error:'Bu kaynaktan istek kabul edilmiyor.'});}
     catch(e) {return res.status(403).json({error:'Geçersiz kaynak.'});}
   }
-  if (!process.env.OPENROUTER_API_KEY) return res.status(503).json({error:'Sunucuda OPENROUTER_API_KEY tanımlanmamış. Vercel ortam değişkenlerini kontrol et.'});
+  // Vercel UI users sometimes paste quotes or the "Bearer " prefix by mistake.
+  // Normalize formatting without ever returning or logging the secret.
+  let apiKey = String(process.env.OPENROUTER_API_KEY || '').trim();
+  if (/^(["']).*\1$/.test(apiKey)) apiKey = apiKey.slice(1, -1).trim();
+  apiKey = apiKey.replace(/^Bearer\s+/i, '').trim();
+  if (!apiKey) return res.status(503).json({error:'Sunucuda OPENROUTER_API_KEY tanımlanmamış. Vercel ortam değişkenlerini kontrol et.'});
   const body = typeof req.body === 'string' ? (()=>{try{return JSON.parse(req.body)}catch(e){return null}})() : req.body;
   const model = body?.model || 'openrouter/free';
   const allowed = model === 'openrouter/free' || (typeof model === 'string' && model.length <= 110 && /^[\w./-]+:free$/.test(model));
@@ -22,11 +27,11 @@ module.exports = async function handler(req, res) {
   try {
     const response = await fetch('https://openrouter.ai/api/v1/chat/completions',{
       method:'POST',signal:abort.signal,
-      headers:{'Authorization':'Bearer '+process.env.OPENROUTER_API_KEY,'Content-Type':'application/json','X-Title':'ILEFBot'},
+      headers:{'Authorization':'Bearer '+apiKey,'Content-Type':'application/json','X-Title':'ILEFBot'},
       body:JSON.stringify({model,messages,max_tokens:900,temperature:0.65})
     });
     const json = await response.json().catch(()=>({}));
-    if (!response.ok) return res.status(response.status >= 400 && response.status <= 599 ? response.status : 502).json({error:response.status===429?'Ücretsiz istek limiti doldu. Daha sonra tekrar dene.':response.status===401?'Sunucu API anahtarı geçersiz.':'OpenRouter isteği başarısız.',details:json?.error?.message?.slice?.(0,180)});
+    if (!response.ok) return res.status(response.status >= 400 && response.status <= 599 ? response.status : 502).json({error:response.status===429?'Ücretsiz istek limiti doldu. Daha sonra tekrar dene.':response.status===401?'OpenRouter, bu deployment üzerinden gönderilen sunucu anahtarını reddetti. Vercel Production ortamını, yeni deployment’ı ve anahtarın OpenRouter hesabında etkin olduğunu kontrol et.':'OpenRouter isteği başarısız.',details:json?.error?.message?.slice?.(0,180)});
     return res.status(200).json({choices:[{message:{content:json?.choices?.[0]?.message?.content||''}}]});
   } catch(e) {return res.status(502).json({error:abort.signal.aborted?'Model zaman aşımına uğradı.':'OpenRouter bağlantısı başarısız.'});}
   finally {clearTimeout(timer);}
