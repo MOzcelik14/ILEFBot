@@ -39,7 +39,7 @@ function renderThreads(){
 }
 function welcome(){
  const box=document.createElement('section');box.className='welcome';
- const symbol=document.createElement('div');symbol.className='welcome-symbol';symbol.textContent='✳';
+ const symbol=document.createElement('div');symbol.className='welcome-symbol';const logo=document.createElement('img');logo.className='welcome-logo';logo.src='https://i.hizliresim.com/ar4mbl6.png';logo.alt='';symbol.append(logo);
  const h=document.createElement('h2');h.textContent='Selam! Ben ';const green=document.createElement('span');green.textContent='İLEFBot.';h.append(green);
  const p=document.createElement('p');p.textContent='Fakülte hayatından yaratıcı projelerine kadar merak ettiklerini konuşalım. Ne üzerinde çalışıyoruz?';
  const grid=document.createElement('div');grid.className='suggestions';
@@ -48,7 +48,7 @@ function welcome(){
 }
 function node(m){
  const item=document.createElement('article');item.className='message '+(m.role==='user'?'user':'assistant');
- const avatar=document.createElement('div');avatar.className='avatar';avatar.textContent=m.role==='user'?'S':'✳';
+ const avatar=document.createElement('div');avatar.className='avatar';if(m.role==='user')avatar.textContent='S';else{const logo=document.createElement('img');logo.className='avatar-logo';logo.src='https://i.hizliresim.com/ar4mbl6.png';logo.alt='';avatar.append(logo);}
  const main=document.createElement('div');main.className='message-main';const head=document.createElement('div');head.className='message-head';
  head.textContent=(m.role==='user'?'Sen':'İLEFBot')+' · '+new Intl.DateTimeFormat('tr-TR',{hour:'2-digit',minute:'2-digit'}).format(m.time||now());
  const bubble=document.createElement('div');bubble.className='bubble';bubble.textContent=m.content;const actions=document.createElement('div');actions.className='message-actions';
@@ -68,7 +68,7 @@ async function ask(messages,signal){
  if(!response.ok){
  if(!direct&&response.status===404)throw Error('Yerel deneme için Ayarlar’dan kişisel API anahtarı gir. Vercel için OPENROUTER_API_KEY ortam değişkenini ekle.');
  if(response.status===429)throw Error('Ücretsiz istek limiti dolmuş veya sunucu meşgul. Daha sonra dene.');
- if(response.status===401)throw Error(!direct&&typeof data.error==='string'?data.error:'OpenRouter kişisel API anahtarını reddetti. Anahtarı ve yetkilerini kontrol et.');
+ if(response.status===401)throw Error(!direct&&typeof data.error==='string'?data.error:'Kişisel API anahtarı reddedildi. Anahtarı ve yetkilerini kontrol et.');
  throw Error(typeof data.error==='string'?data.error:(data.error?.message||'API hatası ('+response.status+').'));
  }
  let content=data?.choices?.[0]?.message?.content;if(Array.isArray(content))content=content.filter(c=>c.type==='text').map(c=>c.text).join('\n');
@@ -81,7 +81,7 @@ async function send(value){
  if(!t.messages.length)t.title=text.length>38?text.slice(0,38)+'…':text;
  t.messages.push({role:'user',content:text,time:now()});t.messages=t.messages.slice(-60);t.updated=now();save();render();E.input.value='';resize();
  const controller=new AbortController();pending=controller;busy();
- const wait=document.createElement('article');wait.className='message assistant';const av=document.createElement('div');av.className='avatar';av.textContent='✳';const main=document.createElement('div');main.className='message-main';const h=document.createElement('div');h.className='message-head';h.textContent='İLEFBot düşünüyor';const dots=document.createElement('div');dots.className='bubble thinking';for(let i=0;i<3;i++)dots.append(document.createElement('i'));main.append(h,dots);wait.append(av,main);E.chat.append(wait);E.scroll.scrollTop=E.scroll.scrollHeight;
+ const wait=document.createElement('article');wait.className='message assistant';const av=document.createElement('div');av.className='avatar';const loadingLogo=document.createElement('img');loadingLogo.className='avatar-logo';loadingLogo.src='https://i.hizliresim.com/ar4mbl6.png';loadingLogo.alt='';av.append(loadingLogo);const main=document.createElement('div');main.className='message-main';const h=document.createElement('div');h.className='message-head';h.textContent='İLEFBot düşünüyor';const dots=document.createElement('div');dots.className='bubble thinking';for(let i=0;i<3;i++)dots.append(document.createElement('i'));main.append(h,dots);wait.append(av,main);E.chat.append(wait);E.scroll.scrollTop=E.scroll.scrollHeight;
  try{const reply=await ask(t.messages.slice(-22).map(m=>({role:m.role,content:m.content.slice(0,3000)})),controller.signal);t.messages.push({role:'assistant',content:reply,time:now()});t.messages=t.messages.slice(-60);t.updated=now();save();render();}
  catch(e){wait.remove();if(e.name!=='AbortError'){const notice=document.createElement('div');notice.className='error-note';notice.textContent=e.message;const retry=btn('Yeniden dene',()=>{if(pending||active()?.id!==t.id||t.messages.at(-1)?.role!=='user')return;const m=t.messages.pop();save();render();send(m.content);});E.chat.append(notice,retry);}}
  finally{if(pending===controller){pending=null;busy();E.input.focus();}}
@@ -89,7 +89,7 @@ async function send(value){
 function theme(){const selected=state.theme;document.documentElement.dataset.theme=selected==='system'?(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark'):selected;save();}
 async function models(){
  const b=$('refresh-models');b.disabled=true;b.textContent='Yükleniyor…';
- try{const r=await fetch(key.trim()?'https://openrouter.ai/api/v1/models':'/api/models');if(!r.ok)throw Error();const result=await r.json();const list=(result.data||[]).filter(m=>m.id?.endsWith(':free')&&Number(m.pricing?.prompt)===0&&Number(m.pricing?.completion)===0).sort((a,b)=>(a.name||a.id).localeCompare(b.name||b.id,'tr'));E.model.replaceChildren(new Option('Otomatik · OpenRouter Free','openrouter/free'));for(const m of list)E.model.add(new Option(m.name||m.id,m.id));if(![...E.model.options].some(o=>o.value===state.model))state.model='openrouter/free';E.model.value=state.model;$('model-label').textContent=E.model.selectedOptions[0]?.textContent||'OpenRouter Free';save();b.textContent=list.length+' ücretsiz model yüklendi';}
+ try{const r=await fetch(key.trim()?'https://openrouter.ai/api/v1/models':'/api/models');if(!r.ok)throw Error();const result=await r.json();const list=(result.data||[]).filter(m=>m.id?.endsWith(':free')&&Number(m.pricing?.prompt)===0&&Number(m.pricing?.completion)===0).sort((a,b)=>(a.name||a.id).localeCompare(b.name||b.id,'tr'));E.model.replaceChildren(new Option('Akıllı yanıtlar · Otomatik','openrouter/free'));for(const m of list)E.model.add(new Option(m.name||m.id,m.id));if(![...E.model.options].some(o=>o.value===state.model))state.model='openrouter/free';E.model.value=state.model;$('model-label').textContent=E.model.selectedOptions[0]?.textContent||'Akıllı yanıtlar';save();b.textContent=list.length+' ücretsiz model yüklendi';}
  catch(e){b.textContent='Liste alınamadı · Yeniden dene';}finally{b.disabled=false;}
 }
 function exportChat(){const threads=active()?[active()]:state.threads;if(!threads.length)return;const text=threads.map(t=>t.title+'\n'+'='.repeat(24)+'\n'+t.messages.map(m=>(m.role==='user'?'Sen':'İLEFBot')+': '+m.content).join('\n\n')).join('\n\n');const url=URL.createObjectURL(new Blob(['\uFEFF'+text],{type:'text/plain;charset=utf-8'}));const a=document.createElement('a');a.href=url;a.download='ilefbot-sohbet.txt';a.click();setTimeout(()=>URL.revokeObjectURL(url),2000);}

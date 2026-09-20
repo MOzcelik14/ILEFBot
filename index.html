@@ -6,13 +6,14 @@
   <meta name="theme-color" content="#0b1515">
   <meta name="description" content="İLEFBot — BAİBÜ İletişim Fakültesi için bağımsız yapay zekâ destekli öğrenci asistanı.">
   <title>İLEFBot — İletişim Fakültesi Asistanı</title>
+  <link rel="icon" type="image/png" href="https://i.hizliresim.com/ar4mbl6.png">
   <link rel="stylesheet" href="./style.css">
   <script src="./app.js" defer></script>
 </head>
 <body>
 <div class="app">
   <aside class="sidebar" id="sidebar" aria-label="Sohbet menüsü">
-    <div class="brand"><span class="brand-mark" aria-hidden="true">✳</span><span>İLEF<span class="accent">Bot</span><small>ÖĞRENCİ ASİSTANI</small></span><button class="icon-btn mobile-close" id="close-sidebar" aria-label="Menüyü kapat">✕</button></div>
+    <div class="brand"><img class="brand-logo" src="https://i.hizliresim.com/ar4mbl6.png" alt="" width="37" height="37"><span>İLEF<span class="accent">Bot</span><small>ÖĞRENCİ ASİSTANI</small></span><button class="icon-btn mobile-close" id="close-sidebar" aria-label="Menüyü kapat">✕</button></div>
     <button class="new-chat" id="new-chat"><span aria-hidden="true">＋</span> Yeni sohbet <span class="new-shortcut">Ctrl K</span></button>
     <div class="nav-label">SOHBETLERİM <span id="chat-count">0</span></div>
     <nav id="thread-list" class="thread-list" aria-label="Sohbetler"></nav>
@@ -29,13 +30,13 @@
     </header>
     <div class="chat-scroll" id="chat-scroll"><div id="chat" class="chat" role="log" aria-label="Sohbet mesajları" aria-live="polite" aria-relevant="additions text"></div></div>
     <div class="composer-wrap"><div class="composer-inner"><form id="form" class="composer"><textarea id="question" rows="1" maxlength="3000" placeholder="İLEFBot'a bir şey sor..." aria-label="Mesajın" required></textarea><button class="send" id="send" type="submit" aria-label="Gönder"><span aria-hidden="true">↑</span></button><button class="stop" id="stop" type="button" aria-label="Yanıtı durdur" hidden>■</button></form>
-      <div class="composer-footer"><div class="footer-model"><span class="sparkle">✳</span><span id="model-label">OpenRouter Free</span><span class="footer-sep">•</span><span>Ücretsiz modeller</span></div><span>Enter gönderir <span class="desktop-only">· Shift+Enter yeni satır</span></span></div>
+      <div class="composer-footer"><div class="footer-model"><img class="footer-logo" src="https://i.hizliresim.com/ar4mbl6.png" alt="" width="16" height="16"><span id="model-label">Akıllı yanıtlar</span><span class="footer-sep">•</span><span>Ücretsiz erişim</span></div><span>Enter gönderir <span class="desktop-only">· Shift+Enter yeni satır</span></span></div>
     </div></div>
   </main>
 </div>
 <dialog id="settings" aria-labelledby="settings-title"><div class="dialog-head"><div><div class="eyebrow">KİŞİSELLEŞTİR</div><h2 id="settings-title">Ayarlar</h2></div><button class="icon-btn" id="settings-close" aria-label="Kapat">✕</button></div>
-  <div class="setting"><label for="model">Ücretsiz model</label><p>Otomatik seçim veya OpenRouter'daki mevcut ücretsiz modeller.</p><select id="model"><option value="openrouter/free">Otomatik · OpenRouter Free</option></select><button class="text-btn" id="refresh-models" type="button">Model listesini yenile</button></div>
-  <div class="setting"><label for="api-key">Kişisel API anahtarı (isteğe bağlı)</label><p>Vercel üzerinde paylaşılan anahtar varsa buna gerek yok. Yerelde denemek için kişisel anahtarını gir. Anahtar yalnızca sekme oturumunda tutulur; sohbet isteği doğrudan OpenRouter'a gider.</p><div class="key-row"><input id="api-key" type="password" autocomplete="off" placeholder="sk-or-v1-…"><button class="small-btn" type="button" id="toggle-key" aria-label="Anahtarı göster veya gizle">Göster</button></div><a href="https://openrouter.ai/settings/keys" target="_blank" rel="noopener noreferrer">OpenRouter'dan anahtar oluştur ↗</a></div>
+  <div class="setting"><label for="model">Ücretsiz model</label><p>Otomatik seçim veya mevcut ücretsiz modeller.</p><select id="model"><option value="openrouter/free">Akıllı yanıtlar · Otomatik</option></select><button class="text-btn" id="refresh-models" type="button">Model listesini yenile</button></div>
+  <div class="setting"><label for="api-key">Kişisel API anahtarı (isteğe bağlı)</label><p>Vercel üzerinde paylaşılan anahtar varsa buna gerek yok. Yerelde denemek için kişisel anahtarını gir. Anahtar yalnızca sekme oturumunda tutulur. Kişisel anahtar kullanılırsa mesajlar doğrudan model sağlayıcısına gönderilir.</p><div class="key-row"><input id="api-key" type="password" autocomplete="off" placeholder="sk-or-v1-…"><button class="small-btn" type="button" id="toggle-key" aria-label="Anahtarı göster veya gizle">Göster</button></div><a href="https://openrouter.ai/settings/keys" target="_blank" rel="noopener noreferrer">API anahtarı oluştur ↗</a></div>
   <div class="setting"><label for="theme">Görünüm</label><select id="theme"><option value="dark">Koyu</option><option value="light">Açık</option><option value="system">Sistem</option></select></div>
   <div class="setting danger-zone"><strong>Verilerin</strong><p>Sohbetler bu tarayıcıda tutulur. Yapay zekâ yanıtı için konuşmanın ilgili kısmı OpenRouter'a ve seçilen model sağlayıcısına gönderilir.</p><button id="export" class="outline-btn" type="button">Sohbeti TXT indir</button><button id="clear-all" class="outline-btn danger" type="button">Tüm sohbetleri sil</button></div>
   <p class="dialog-foot">İLEFBot resmî BAİBÜ sistemi değildir. Akademik işlemleri resmî duyurularla doğrula.</p>
