@@ -1,23 +1,28 @@
-# İLEFBot
+# İLEFBot — BAİBÜ İletişim Fakültesi Asistanı
 
-BAİBÜ İletişim Fakültesi öğrencileri için bağımsız, istemci tarafında çalışan genel rehber.
+OpenRouter destekli, mobil uyumlu, bağımsız öğrenci sohbet uygulaması. **Resmî BAİBÜ hizmeti değildir.** Güncel akademik işlemlerde [fakültenin resmî sayfası](https://ilef.ibu.edu.tr/) ve akademik danışman esas alınmalıdır.
 
 ## Özellikler
+- OpenRouter `openrouter/free` ile ücretsiz model yönlendirme; sunucu yalnızca ücretsiz model varyantlarına izin verir.
+- OpenRouter'ın mevcut sıfır maliyetli ücretsiz modellerinden seçim; katalog alınamıyorsa otomatik ücretsiz yönlendirme.
+- Çoklu sohbet; yeniden adlandırma, silme, eski sürümden sohbet aktarımı ve TXT dışa aktarma.
+- Mobil arayüz, koyu/açık/sistem teması, hızlı soru önerileri, yanıtı durdurma, mesaj kopyalama ve Ctrl+K.
+- Sohbetler tarayıcıda saklanır (en fazla 30 sohbet ve sohbet başına 60 mesaj).
+- Yerel deneme için kişisel OpenRouter anahtarı; yalnızca `sessionStorage` içinde.
 
-- Sunucu, yapay zekâ modeli veya API anahtarı gerektirmez.
-- Ders kaydı, Erasmus, staj, akademik takvim, danışman, transkript, mezuniyet ve iletişim hakkında genel yönlendirme.
-- `localStorage` üzerinden cihazda sohbet geçmişi (son 100 mesaj).
-- TXT dışa aktarma ve onaylı geçmiş temizleme.
-- Mobil tasarım, Türkçe arama, klavye kullanımı ve temel erişilebilirlik.
+## Vercel kurulumu
+1. GitHub deposunu Vercel'e bağla; **Framework Preset: Other**. Proje kökünü kullan, build komutu ve output directory ayarlarını boş bırak.
+2. [OpenRouter anahtarı oluştur](https://openrouter.ai/settings/keys). Özellikle bu demo için ayrı bir anahtar kullan ve mümkünse harcama limiti koy.
+3. Vercel → Project → Settings → Environment Variables: `OPENROUTER_API_KEY` ekle. Production ve test edeceğin Preview ortamlarına ata; yeniden deploy et.
+4. Sitede Ayarlar → kişisel anahtar alanını **boş** bırakırsan ziyaretçiler Vercel sunucu fonksiyonunu kullanır. Sunucu anahtarı tarayıcıya iletilmez.
 
-## Çalıştırma
+**Güvenlik ve kota:** Herkese açık `/api/chat` demo endpoint'i ortak OpenRouter kotasını tüketir. Origin kontrolü kimlik doğrulaması değildir. Trafiğe açmadan önce kalıcı IP/kullanıcı bazlı hız sınırlama, Vercel Firewall/bot koruması ve hesap kotası izlemesi önerilir. Ücretli modellere bilerek izin verilmemiştir.
 
-`index.html` dosyasını tarayıcıda aç veya statik web barındırmaya yükle. Derleme gerektirmez.
+## Yerelde deneme
+`index.html` dosyasını açabilirsin. Yapay zekâ yanıtı için Ayarlar'a kendi OpenRouter anahtarını gir. Tarayıcı `file://` bağlantılarında çapraz kaynak API çağrısını engelliyorsa `python3 -m http.server 8000` komutuyla `http://localhost:8000` aç. Sunucu fonksiyonlarını yerelde çalıştırmak için `vercel dev` kullan.
 
-## Bilgi tabanını güncelleme
+## Gizlilik
+Sohbet geçmişi tarayıcıdaki `localStorage` içinde tutulur. Yanıt vermek için son mesajlar OpenRouter'a ve seçilen model sağlayıcısına gönderilir. Paylaşılan bilgisayarda geçmişi sil; şifre, kimlik numarası vb. hassas bilgileri yazma. Kişisel API anahtarı uygulama koduna eklenmez.
 
-`index.html` içindeki `knowledge` dizisine `terms` (Türkçe anahtar ifadeler) ve `answer` ekle. Öğrenciye gösterilen yanıtları yayımlamadan önce güncel resmî kaynaklardan doğrula.
-
-## Sınırlar ve gizlilik
-
-Bu sürüm üretken yapay zekâ değil, anahtar kelime tabanlı bir rehberdir. Resmî BAİBÜ hizmeti değildir ve kesin öğrenci işlemi yönlendirmesi vermez. Mesajlar ağ üzerinden gönderilmez; tarayıcının yerel depolama alanında saklanır ve aynı tarayıcı profilini kullanan biri tarafından görülebilir. Ortak cihazlarda geçmişi temizle.
+## Teknoloji
+Vanilla HTML, CSS, JavaScript ve Vercel Node serverless fonksiyonları. Derleme veya paket yükleme gerektirmez.
