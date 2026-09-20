@@ -21,6 +21,15 @@ async function run(){
     global.fetch=async(url,opts)=>{sent={url,opts,body:JSON.parse(opts.body)};return {ok:true,status:200,json:async()=>({choices:[{message:{content:'Merhaba'}}]})};};
     r=await call(chat,{method:'POST',headers:{host:'ilefbot.example',origin:'https://ilefbot.example'},body:{model:'openrouter/free',messages:[{role:'user',content:'Hi'}]}});
     assert.equal(r.code,200);assert.equal(r.body.choices[0].message.content,'Merhaba');assert.equal(sent.body.messages[0].role,'system');assert.equal(sent.opts.headers.Authorization,'Bearer fake-test-key');passed++;
+    for(const value of [' fake-test-key  ','"fake-test-key"','Bearer fake-test-key']) {
+      process.env.OPENROUTER_API_KEY=value;
+      r=await call(chat,{method:'POST',headers:{host:'ilefbot.example'},body:{model:'openrouter/free',messages:[{role:'user',content:'Hi'}]}});
+      assert.equal(r.code,200);assert.equal(sent.opts.headers.Authorization,'Bearer fake-test-key');passed++;
+    }
+    global.fetch=async()=>({ok:false,status:401,json:async()=>({error:{message:'User not found'}})});
+    r=await call(chat,{method:'POST',headers:{host:'ilefbot.example'},body:{model:'openrouter/free',messages:[{role:'user',content:'Hi'}]}});
+    assert.equal(r.code,401);assert.match(r.body.error,/OpenRouter/);assert.doesNotMatch(JSON.stringify(r.body),/fake-test-key/);passed++;
+    process.env.OPENROUTER_API_KEY='fake-test-key';
     global.fetch=async()=>({ok:true,json:async()=>({data:[{id:'provider/free:free',name:'Free',pricing:{prompt:'0',completion:'0'}},{id:'provider/paid',name:'Paid',pricing:{prompt:'0.1',completion:'0.1'}}]})});
     r=await call(models,{method:'GET'});assert.equal(r.code,200);assert.equal(r.body.data.length,1);passed++;
   }finally{global.fetch=oldFetch;if(old)process.env.OPENROUTER_API_KEY=old;else delete process.env.OPENROUTER_API_KEY;}
