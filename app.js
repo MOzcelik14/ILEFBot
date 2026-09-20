@@ -68,7 +68,7 @@ async function ask(messages,signal){
  if(!response.ok){
  if(!direct&&response.status===404)throw Error('Yerel deneme için Ayarlar’dan kişisel API anahtarı gir. Vercel için OPENROUTER_API_KEY ortam değişkenini ekle.');
  if(response.status===429)throw Error('Ücretsiz istek limiti dolmuş veya sunucu meşgul. Daha sonra dene.');
- if(response.status===401)throw Error('API anahtarı geçersiz.');
+ if(response.status===401)throw Error(!direct&&typeof data.error==='string'?data.error:'OpenRouter kişisel API anahtarını reddetti. Anahtarı ve yetkilerini kontrol et.');
  throw Error(typeof data.error==='string'?data.error:(data.error?.message||'API hatası ('+response.status+').'));
  }
  let content=data?.choices?.[0]?.message?.content;if(Array.isArray(content))content=content.filter(c=>c.type==='text').map(c=>c.text).join('\n');
