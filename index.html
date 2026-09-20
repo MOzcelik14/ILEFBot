@@ -1,364 +1,44 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>İLEFBot — Bakımda</title>
-
-    <style>
-        :root {
-            --green: #2f7d46;
-            --green-light: #6ca67b;
-            --text: #171917;
-            --muted: #777b78;
-            --border: rgba(30, 40, 32, .08);
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        html, body {
-            width: 100%;
-            height: 100%;
-        }
-
-        body {
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            background:
-                linear-gradient(
-                    rgba(30, 70, 40, .035) 1px,
-                    transparent 1px
-                ),
-                linear-gradient(
-                    90deg,
-                    rgba(30, 70, 40, .035) 1px,
-                    transparent 1px
-                ),
-                #fafbf9;
-
-            background-size: 48px 48px;
-
-            color: var(--text);
-            font-family:
-                Inter,
-                -apple-system,
-                BlinkMacSystemFont,
-                "Segoe UI",
-                sans-serif;
-        }
-
-        /* Ambient glow */
-
-        body::before {
-            content: "";
-            position: fixed;
-            width: 650px;
-            height: 650px;
-            border-radius: 50%;
-
-            background: radial-gradient(
-                circle,
-                rgba(47, 125, 70, .10) 0%,
-                rgba(47, 125, 70, .045) 35%,
-                transparent 70%
-            );
-
-            filter: blur(20px);
-            pointer-events: none;
-        }
-
-        .page {
-            position: relative;
-            z-index: 1;
-
-            width: min(680px, 90vw);
-            text-align: center;
-
-            animation: appear .9s cubic-bezier(.2,.8,.2,1);
-        }
-
-        /* Logo */
-
-        .logo-wrap {
-            position: relative;
-
-            width: 148px;
-            height: 148px;
-
-            margin: 0 auto 42px;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .logo-wrap::before {
-            content: "";
-
-            position: absolute;
-            inset: -18px;
-
-            border: 1px solid rgba(47, 125, 70, .10);
-            border-radius: 50%;
-
-            animation: pulse 3s ease-in-out infinite;
-        }
-
-        .logo-wrap::after {
-            content: "";
-
-            position: absolute;
-            inset: -34px;
-
-            border: 1px solid rgba(47, 125, 70, .045);
-            border-radius: 50%;
-        }
-
-        .logo {
-            width: 128px;
-            height: 128px;
-
-            object-fit: contain;
-
-            filter:
-                drop-shadow(0 12px 25px rgba(47, 125, 70, .14));
-        }
-
-        /* Text */
-
-        .eyebrow {
-            display: inline-flex;
-            align-items: center;
-            gap: 9px;
-
-            margin-bottom: 20px;
-
-            color: var(--green);
-
-            font-size: 12px;
-            font-weight: 600;
-            letter-spacing: .16em;
-            text-transform: uppercase;
-        }
-
-        .eyebrow span {
-            width: 6px;
-            height: 6px;
-
-            border-radius: 50%;
-            background: var(--green);
-
-            box-shadow: 0 0 0 5px rgba(47, 125, 70, .08);
-
-            animation: blink 2s ease-in-out infinite;
-        }
-
-        h1 {
-            font-size: clamp(42px, 7vw, 72px);
-            line-height: .98;
-            letter-spacing: -.055em;
-            font-weight: 650;
-
-            margin-bottom: 22px;
-        }
-
-        h1 strong {
-            color: var(--green);
-            font-weight: inherit;
-        }
-
-        .description {
-            max-width: 510px;
-            margin: 0 auto;
-
-            color: var(--muted);
-
-            font-size: 16px;
-            line-height: 1.7;
-            letter-spacing: -.01em;
-        }
-
-        /* Progress */
-
-        .progress {
-            width: 240px;
-            height: 3px;
-
-            margin: 36px auto 0;
-
-            overflow: hidden;
-
-            border-radius: 999px;
-            background: rgba(47, 125, 70, .10);
-        }
-
-        .progress::before {
-            content: "";
-
-            display: block;
-
-            width: 42%;
-            height: 100%;
-
-            border-radius: inherit;
-            background: var(--green);
-
-            animation: progress 2.4s ease-in-out infinite;
-        }
-
-        /* Footer */
-
-        footer {
-            position: fixed;
-            z-index: 2;
-
-            left: 0;
-            bottom: 30px;
-
-            width: 100%;
-
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 12px;
-
-            color: #a1a5a2;
-
-            font-size: 11px;
-            letter-spacing: .08em;
-            text-transform: uppercase;
-        }
-
-        footer::before,
-        footer::after {
-            content: "";
-
-            width: 28px;
-            height: 1px;
-
-            background: var(--border);
-        }
-
-        /* Animations */
-
-        @keyframes appear {
-            from {
-                opacity: 0;
-                transform: translateY(18px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes pulse {
-            0%, 100% {
-                transform: scale(1);
-                opacity: .7;
-            }
-
-            50% {
-                transform: scale(1.04);
-                opacity: 1;
-            }
-        }
-
-        @keyframes blink {
-            0%, 100% {
-                opacity: .45;
-            }
-
-            50% {
-                opacity: 1;
-            }
-        }
-
-        @keyframes progress {
-            0% {
-                transform: translateX(-130%);
-            }
-
-            50% {
-                transform: translateX(110%);
-            }
-
-            100% {
-                transform: translateX(280%);
-            }
-        }
-
-        @media (max-width: 600px) {
-            .logo-wrap {
-                width: 120px;
-                height: 120px;
-                margin-bottom: 34px;
-            }
-
-            .logo {
-                width: 105px;
-                height: 105px;
-            }
-
-            h1 {
-                font-size: 45px;
-            }
-
-            .description {
-                font-size: 15px;
-                padding: 0 10px;
-            }
-
-            footer {
-                bottom: 20px;
-            }
-        }
-    </style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b1515">
+  <meta name="description" content="İLEFBot — BAİBÜ İletişim Fakültesi için bağımsız yapay zekâ destekli öğrenci asistanı.">
+  <title>İLEFBot — İletişim Fakültesi Asistanı</title>
+  <link rel="stylesheet" href="./style.css">
+  <script src="./app.js" defer></script>
 </head>
-
 <body>
-
-    <main class="page">
-
-        <div class="logo-wrap">
-            <img
-                class="logo"
-                src="https://i.hizliresim.com/ar4mbl6.png"
-                alt="İLEFBot"
-            >
-        </div>
-
-        <div class="eyebrow">
-            <span></span>
-            BAKIMDA
-        </div>
-
-        <h1>
-            İLEFBot<br>
-            <strong>yenileniyor.</strong>
-        </h1>
-
-        <p class="description">
-            Daha iyi bir deneyim için İLEFBot'u baştan geliştiriyoruz.
-            Yeni sürüm üzerinde çalışmalar devam ediyor.
-        </p>
-
-        <div class="progress"></div>
-
-    </main>
-
-    <footer>
-        Murat Özçelik | Bolu Abant İzzet Baysal Üniversitesi İletişim Fakültesi
-    </footer>
-
+<div class="app">
+  <aside class="sidebar" id="sidebar" aria-label="Sohbet menüsü">
+    <div class="brand"><span class="brand-mark" aria-hidden="true">✳</span><span>İLEF<span class="accent">Bot</span><small>ÖĞRENCİ ASİSTANI</small></span><button class="icon-btn mobile-close" id="close-sidebar" aria-label="Menüyü kapat">✕</button></div>
+    <button class="new-chat" id="new-chat"><span aria-hidden="true">＋</span> Yeni sohbet <span class="new-shortcut">Ctrl K</span></button>
+    <div class="nav-label">SOHBETLERİM <span id="chat-count">0</span></div>
+    <nav id="thread-list" class="thread-list" aria-label="Sohbetler"></nav>
+    <div class="sidebar-bottom"><div class="sidebar-note"><span class="note-dot"></span> Öğrenmeye devam et <p>Derslerinden projelerine, aklındaki her şey için buradayım.</p></div>
+      <button class="sidebar-setting" id="settings-open"><span aria-hidden="true">⚙</span> Ayarlar <span aria-hidden="true">↗</span></button>
+      <div class="sidebar-foot">BAİBÜ İletişim Fakültesi için<br>bağımsız bir öğrenci projesi.</div>
+    </div>
+  </aside>
+  <div id="overlay" class="overlay" hidden></div>
+  <main class="workspace">
+    <header class="topbar">
+      <div class="top-left"><button class="icon-btn menu-btn" id="open-sidebar" aria-label="Menüyü aç">☰</button><div><div class="eyebrow">KAMPÜSÜN DİJİTAL ARKADAŞI <span aria-hidden="true">↗</span></div><h1 id="conversation-title">Yeni sohbet</h1></div></div>
+      <div class="top-actions"><span class="status"><i></i> <span id="connection-label">Hazır</span></span><button class="icon-btn settings-mobile" id="settings-open-mobile" aria-label="Ayarlar">⚙</button></div>
+    </header>
+    <div class="chat-scroll" id="chat-scroll"><div id="chat" class="chat" role="log" aria-label="Sohbet mesajları" aria-live="polite" aria-relevant="additions text"></div></div>
+    <div class="composer-wrap"><div class="composer-inner"><form id="form" class="composer"><textarea id="question" rows="1" maxlength="3000" placeholder="İLEFBot'a bir şey sor..." aria-label="Mesajın" required></textarea><button class="send" id="send" type="submit" aria-label="Gönder"><span aria-hidden="true">↑</span></button><button class="stop" id="stop" type="button" aria-label="Yanıtı durdur" hidden>■</button></form>
+      <div class="composer-footer"><div class="footer-model"><span class="sparkle">✳</span><span id="model-label">OpenRouter Free</span><span class="footer-sep">•</span><span>Ücretsiz modeller</span></div><span>Enter gönderir <span class="desktop-only">· Shift+Enter yeni satır</span></span></div>
+    </div></div>
+  </main>
+</div>
+<dialog id="settings" aria-labelledby="settings-title"><div class="dialog-head"><div><div class="eyebrow">KİŞİSELLEŞTİR</div><h2 id="settings-title">Ayarlar</h2></div><button class="icon-btn" id="settings-close" aria-label="Kapat">✕</button></div>
+  <div class="setting"><label for="model">Ücretsiz model</label><p>Otomatik seçim veya OpenRouter'daki mevcut ücretsiz modeller.</p><select id="model"><option value="openrouter/free">Otomatik · OpenRouter Free</option></select><button class="text-btn" id="refresh-models" type="button">Model listesini yenile</button></div>
+  <div class="setting"><label for="api-key">Kişisel API anahtarı (isteğe bağlı)</label><p>Vercel üzerinde paylaşılan anahtar varsa buna gerek yok. Yerelde denemek için kişisel anahtarını gir. Anahtar yalnızca sekme oturumunda tutulur; sohbet isteği doğrudan OpenRouter'a gider.</p><div class="key-row"><input id="api-key" type="password" autocomplete="off" placeholder="sk-or-v1-…"><button class="small-btn" type="button" id="toggle-key" aria-label="Anahtarı göster veya gizle">Göster</button></div><a href="https://openrouter.ai/settings/keys" target="_blank" rel="noopener noreferrer">OpenRouter'dan anahtar oluştur ↗</a></div>
+  <div class="setting"><label for="theme">Görünüm</label><select id="theme"><option value="dark">Koyu</option><option value="light">Açık</option><option value="system">Sistem</option></select></div>
+  <div class="setting danger-zone"><strong>Verilerin</strong><p>Sohbetler bu tarayıcıda tutulur. Yapay zekâ yanıtı için konuşmanın ilgili kısmı OpenRouter'a ve seçilen model sağlayıcısına gönderilir.</p><button id="export" class="outline-btn" type="button">Sohbeti TXT indir</button><button id="clear-all" class="outline-btn danger" type="button">Tüm sohbetleri sil</button></div>
+  <p class="dialog-foot">İLEFBot resmî BAİBÜ sistemi değildir. Akademik işlemleri resmî duyurularla doğrula.</p>
+</dialog>
 </body>
 </html>
