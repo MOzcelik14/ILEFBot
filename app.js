@@ -49,7 +49,7 @@ function welcome(){
 function node(m){
  const item=document.createElement('article');item.className='message '+(m.role==='user'?'user':'assistant');
  const avatar=document.createElement('div');avatar.className='avatar';avatar.textContent=m.role==='user'?'S':'✳';
- const main=document.createElement('div');main.className='message-main',head=document.createElement('div');head.className='message-head';
+ const main=document.createElement('div');main.className='message-main';const head=document.createElement('div');head.className='message-head';
  head.textContent=(m.role==='user'?'Sen':'İLEFBot')+' · '+new Intl.DateTimeFormat('tr-TR',{hour:'2-digit',minute:'2-digit'}).format(m.time||now());
  const bubble=document.createElement('div');bubble.className='bubble';bubble.textContent=m.content;const actions=document.createElement('div');actions.className='message-actions';
  actions.append(btn('⧉ Kopyala',async()=>{try{await navigator.clipboard.writeText(m.content);}catch(e){console.warn('Kopyalanamadı',e);}}));
