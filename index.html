@@ -1,101 +1,44 @@
 <!doctype html>
 <html lang="tr">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#195c40"><meta name="description" content="İLEFBot: BAİBÜ İletişim Fakültesi öğrencileri için çevrimdışı rehber.">
-<title>İLEFBot — Öğrenci Rehberi</title>
-<style>
-:root{font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;color:#183027;background:#f3f7f3;font-synthesis:none}*{box-sizing:border-box}
-body{margin:0;min-height:100dvh}button,textarea{font:inherit}button{cursor:pointer}button:focus-visible,textarea:focus-visible{outline:3px solid #72bd94;outline-offset:3px}
-.app{max-width:1100px;min-height:100dvh;margin:auto;display:grid;grid-template-columns:295px minmax(0,1fr);box-shadow:0 0 50px #163b2010}
-aside{background:#154d36;color:#fff;padding:32px 24px;display:flex;flex-direction:column;gap:30px}
-.brand{font-weight:800;font-size:1.8rem;letter-spacing:-.04em}.brand span{color:#b3dfbf}.aside-copy{color:#d2e7d8;line-height:1.7;font-size:.94rem}
-.caption{font-size:.72rem;text-transform:uppercase;letter-spacing:.15em;color:#b5d5c1;margin-bottom:14px}
-.topics{display:grid;gap:9px}.topic{background:#ffffff13;border:1px solid #ffffff30;color:#fff;padding:13px 15px;text-align:left;border-radius:13px}.topic:hover{background:#ffffff26}
-.privacy{margin-top:auto;font-size:.8rem;color:#d2e7d8;line-height:1.6}
-main{min-width:0;min-height:100dvh;display:flex;flex-direction:column;background:#fcfdfb}
-header{padding:24px 30px;border-bottom:1px solid #e7ebe7;display:flex;align-items:center;justify-content:space-between;gap:12px}
-header h1{font-size:1.14rem;margin:0}header p{font-size:.78rem;color:#65766b;margin:5px 0 0}.badge{font-size:.72rem;background:#e4f4e7;color:#276b45;padding:8px 12px;border-radius:30px;white-space:nowrap}
-.chat{flex:1;overflow-y:auto;min-height:200px;max-height:calc(100dvh - 205px);padding:32px 30px;display:flex;flex-direction:column;gap:18px;scroll-behavior:smooth}
-.message{max-width:min(85%,660px);border-radius:18px;padding:15px 18px;line-height:1.6;font-size:.95rem;white-space:pre-wrap;overflow-wrap:anywhere}
-.message.bot{background:#f0f4ef;align-self:flex-start;border-bottom-left-radius:5px}.message.user{background:#195c40;color:white;align-self:flex-end;border-bottom-right-radius:5px}
-.message small{display:block;margin-bottom:5px;opacity:.65;font-size:.71rem;font-weight:700}
-.composer{padding:16px 30px 24px;border-top:1px solid #e7ebe7;background:#fff}
-.input-line{display:flex;align-items:end;gap:10px}.input-line textarea{flex:1;min-width:0;resize:vertical;min-height:52px;max-height:160px;padding:15px;border:1px solid #d7e1d9;border-radius:14px;background:#fbfdfb;color:#183027}
-.send{background:#195c40;color:#fff;border:0;border-radius:13px;padding:16px 20px;font-weight:700;min-height:52px}.send:hover{background:#24734e}
-.tools{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-top:12px}.tools button{background:none;border:0;color:#41634b;font-size:.78rem;padding:3px}.tools button:hover{text-decoration:underline}.tools p{margin:0 0 0 auto;color:#718075;font-size:.72rem}
-@media(max-width:720px){.app{display:flex;flex-direction:column}aside{padding:18px;gap:12px}.brand{font-size:1.4rem}.aside-copy,.caption,.privacy{display:none}.topics{display:flex;overflow-x:auto;gap:8px}.topic{white-space:nowrap;flex:none;padding:10px 12px;font-size:.8rem}main{min-height:calc(100dvh - 126px)}header{padding:16px}.chat{max-height:none;padding:20px 16px;min-height:300px}.message{max-width:94%}.composer{padding:12px 16px 18px}.tools p{margin-left:0;width:100%}}
-@media(prefers-reduced-motion:reduce){.chat{scroll-behavior:auto}}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b1515">
+  <meta name="description" content="İLEFBot — BAİBÜ İletişim Fakültesi için bağımsız yapay zekâ destekli öğrenci asistanı.">
+  <title>İLEFBot — İletişim Fakültesi Asistanı</title>
+  <link rel="stylesheet" href="./style.css">
+  <script src="./app.js" defer></script>
 </head>
 <body>
 <div class="app">
-<aside aria-label="Konu başlıkları">
-<div class="brand">İLEF<span>Bot.</span></div>
-<p class="aside-copy">İletişim Fakültesi öğrencileri için sade bir başlangıç noktası. Sorunu yaz veya bir konu seç.</p>
-<div><div class="caption">Hızlı konular</div><nav class="topics" aria-label="Önerilen sorular">
-<button class="topic" data-question="Ders kaydı nasıl yapılır?">Ders kaydı</button>
-<button class="topic" data-question="Erasmus hakkında bilgi">Erasmus</button>
-<button class="topic" data-question="Staj hakkında bilgi">Staj</button>
-<button class="topic" data-question="Akademik takvim nerede?">Akademik takvim</button>
-<button class="topic" data-question="Danışmanıma nasıl ulaşırım?">Akademik danışman</button>
-</nav></div><p class="privacy">🔒 Mesajlar yalnızca bu tarayıcıda saklanır. Bu araç resmî üniversite duyurularının yerine geçmez.</p>
-</aside>
-<main>
-<header><div><h1>İLEFBot ile sohbet</h1><p>BAİBÜ İletişim Fakültesi • Bağımsız öğrenci rehberi</p></div><span class="badge">API gerektirmez</span></header>
-<section class="chat" id="chat" role="log" aria-label="Sohbet mesajları" aria-live="polite" aria-relevant="additions"></section>
-<form class="composer" id="form"><div class="input-line"><textarea id="question" aria-label="Mesajın" maxlength="1000" rows="1" placeholder="Bir şey sor..." required></textarea><button class="send" type="submit">Gönder</button></div>
-<div class="tools"><button type="button" id="export">Sohbeti TXT olarak indir</button><button type="button" id="clear">Geçmişi temizle</button><p>Enter: gönder • Shift+Enter: yeni satır</p></div></form>
-</main></div>
-<script>
-(() => {
-'use strict';
-const STORAGE_KEY='ilefbot.chat.v1',MAX_MESSAGES=100;
-const chat=document.getElementById('chat'),form=document.getElementById('form'),input=document.getElementById('question');
-const normalize=text=>text.toLocaleLowerCase('tr-TR').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/ı/g,'i');
-const knowledge=[
-{terms:['ders kaydi','ders secimi','ders ekle','ubys','kayit yenile'],answer:'Ders kaydı ve danışman onayı için üniversitenin güncel öğrenci bilgi sistemi (UBYS) duyurularını kontrol et. Dersin açılması, ön koşullar ve seçmeli kontenjanları dönemden döneme değişebilir. Kendi müfredatını ve danışmanını esas al.'},
-{terms:['erasmus','yurtdisi','degisim programi'],answer:'Erasmus başvuruları, anlaşmalı kurumlar, dil koşulları ve hibe takvimi için BAİBÜ Uluslararası İlişkiler Koordinatörlüğünün güncel ilanlarına bak. Bölüm Erasmus koordinatörünle ders eşleştirmelerini önceden görüş.'},
-{terms:['staj','is yeri egitimi'],answer:'Stajın zorunlu olup olmadığı, süresi, evrakı ve teslim takvimi programa göre değişebilir. Kendi bölümünün güncel staj yönergesini ve bölüm sekreterliğinin duyurularını kontrol et.'},
-{terms:['akademik takvim','sinav tarihi','final tarihi','butunleme','vize haftasi'],answer:'Ders başlangıcı, sınav haftaları ve kayıt tarihleri için BAİBÜ resmî akademik takvimini kontrol et. Bölüme özgü sınav programı ayrıca duyurulabilir.'},
-{terms:['danisman','akademik danisman','hocama ulas'],answer:'Akademik danışman bilgini öğrenci bilgi sisteminden veya bölüm sekreterliğinden doğrula. Ders seçimi, intibak ve mezuniyet koşullarında danışmanının yönlendirmesini esas al.'},
-{terms:['transkript','not dokumu','ortalama','agno'],answer:'Transkript ve not ortalaması için öğrenci bilgi sistemindeki kişisel kayıtlarını incele. İtiraz veya belge talebinde öğrenci işleri ve ilgili bölümle iletişime geç.'},
-{terms:['mezuniyet','bitirme','diploma'],answer:'Mezuniyet için gerekli kredi, ders ve uygulama koşulları giriş yılına ve programa bağlı olabilir. Kendi müfredatını, transkriptini ve öğrenci işlerinin güncel açıklamalarını birlikte kontrol et.'},
-{terms:['iletisim','adres','telefon','sekreterlik'],answer:'Güncel bölüm iletişim bilgileri ve duyurular için BAİBÜ resmî web sitesinden İletişim Fakültesi sayfasına ulaş. Telefon ve personel bilgilerini burada sabit tutmuyoruz; değişebilir.'}
-];
-function reply(text){
-const q=normalize(text);
-const matched=knowledge.map(entry=>({entry,score:entry.terms.reduce((score,term)=>score+(q.includes(term)?term.length:0),0)})).sort((a,b)=>b.score-a.score)[0];
-if(matched&&matched.score>0)return matched.entry.answer;
-if(/^(merhaba|selam|hey|iyi gunler)[!.\s]*$/.test(q.trim()))return 'Merhaba! Ders kaydı, Erasmus, staj, akademik takvim veya danışmanlık hakkında sorabilirsin.';
-return 'Bu konuda doğrulanmış bir yanıtım henüz yok. Ders kaydı, Erasmus, staj, akademik takvim ve danışmanlık konularını deneyebilirsin. Resmî ve güncel bilgi için BAİBÜ duyurularına başvur.';
-}
-const welcome={role:'bot',text:'Merhaba! Ben İLEFBot. Ders kaydı, Erasmus, staj, akademik takvim veya danışmanlık hakkında sorabilirsin. Yanıtlarım genel rehberlik sağlar; güncel koşulları resmî kaynaklardan doğrula.'};
-function load(){
-try{const data=JSON.parse(localStorage.getItem(STORAGE_KEY));if(Array.isArray(data))return data.filter(m=>m&&(m.role==='bot'||m.role==='user')&&typeof m.text==='string'&&m.text.length<=3000).slice(-MAX_MESSAGES);}
-catch(error){console.warn('Sohbet geçmişi okunamadı.',error);}return [];
-}
-let messages=load();if(!messages.length)messages=[welcome];
-function save(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(messages));}catch(error){console.warn('Sohbet geçmişi kaydedilemedi.',error);}}
-function renderMessage(message){
-const el=document.createElement('article');el.className='message '+message.role;
-const label=document.createElement('small');label.textContent=message.role==='bot'?'İLEFBot':'Sen';
-const body=document.createElement('div');body.textContent=message.text;el.append(label,body);chat.appendChild(el);chat.scrollTop=chat.scrollHeight;
-}
-messages.forEach(renderMessage);
-function add(role,text){const message={role,text};messages.push(message);messages=messages.slice(-MAX_MESSAGES);renderMessage(message);save();}
-function submit(text){const value=text.trim().slice(0,1000);if(!value)return;add('user',value);add('bot',reply(value));input.value='';input.focus();}
-form.addEventListener('submit',event=>{event.preventDefault();submit(input.value);});
-input.addEventListener('keydown',event=>{if(event.key==='Enter'&&!event.shiftKey&&!event.isComposing){event.preventDefault();submit(input.value);}});
-document.querySelectorAll('[data-question]').forEach(button=>button.addEventListener('click',()=>submit(button.dataset.question)));
-document.getElementById('clear').addEventListener('click',()=>{if(!confirm('Bu tarayıcıdaki tüm İLEFBot sohbet geçmişi silinsin mi?'))return;messages=[welcome];chat.replaceChildren();messages.forEach(renderMessage);save();});
-document.getElementById('export').addEventListener('click',()=>{
-const content=messages.map(message=>(message.role==='bot'?'İLEFBot: ':'Sen: ')+message.text).join('\n\n');
-const url=URL.createObjectURL(new Blob(['\uFEFF'+content],{type:'text/plain;charset=utf-8'}));
-const a=document.createElement('a');a.href=url;a.download='ilefbot-sohbet.txt';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
-});
-save();
-})();
-</script>
+  <aside class="sidebar" id="sidebar" aria-label="Sohbet menüsü">
+    <div class="brand"><span class="brand-mark" aria-hidden="true">✳</span><span>İLEF<span class="accent">Bot</span><small>ÖĞRENCİ ASİSTANI</small></span><button class="icon-btn mobile-close" id="close-sidebar" aria-label="Menüyü kapat">✕</button></div>
+    <button class="new-chat" id="new-chat"><span aria-hidden="true">＋</span> Yeni sohbet <span class="new-shortcut">Ctrl K</span></button>
+    <div class="nav-label">SOHBETLERİM <span id="chat-count">0</span></div>
+    <nav id="thread-list" class="thread-list" aria-label="Sohbetler"></nav>
+    <div class="sidebar-bottom"><div class="sidebar-note"><span class="note-dot"></span> Öğrenmeye devam et <p>Derslerinden projelerine, aklındaki her şey için buradayım.</p></div>
+      <button class="sidebar-setting" id="settings-open"><span aria-hidden="true">⚙</span> Ayarlar <span aria-hidden="true">↗</span></button>
+      <div class="sidebar-foot">BAİBÜ İletişim Fakültesi için<br>bağımsız bir öğrenci projesi.</div>
+    </div>
+  </aside>
+  <div id="overlay" class="overlay" hidden></div>
+  <main class="workspace">
+    <header class="topbar">
+      <div class="top-left"><button class="icon-btn menu-btn" id="open-sidebar" aria-label="Menüyü aç">☰</button><div><div class="eyebrow">KAMPÜSÜN DİJİTAL ARKADAŞI <span aria-hidden="true">↗</span></div><h1 id="conversation-title">Yeni sohbet</h1></div></div>
+      <div class="top-actions"><span class="status"><i></i> <span id="connection-label">Hazır</span></span><button class="icon-btn settings-mobile" id="settings-open-mobile" aria-label="Ayarlar">⚙</button></div>
+    </header>
+    <div class="chat-scroll" id="chat-scroll"><div id="chat" class="chat" role="log" aria-label="Sohbet mesajları" aria-live="polite" aria-relevant="additions text"></div></div>
+    <div class="composer-wrap"><div class="composer-inner"><form id="form" class="composer"><textarea id="question" rows="1" maxlength="3000" placeholder="İLEFBot'a bir şey sor..." aria-label="Mesajın" required></textarea><button class="send" id="send" type="submit" aria-label="Gönder"><span aria-hidden="true">↑</span></button><button class="stop" id="stop" type="button" aria-label="Yanıtı durdur" hidden>■</button></form>
+      <div class="composer-footer"><div class="footer-model"><span class="sparkle">✳</span><span id="model-label">OpenRouter Free</span><span class="footer-sep">•</span><span>Ücretsiz modeller</span></div><span>Enter gönderir <span class="desktop-only">· Shift+Enter yeni satır</span></span></div>
+    </div></div>
+  </main>
+</div>
+<dialog id="settings" aria-labelledby="settings-title"><div class="dialog-head"><div><div class="eyebrow">KİŞİSELLEŞTİR</div><h2 id="settings-title">Ayarlar</h2></div><button class="icon-btn" id="settings-close" aria-label="Kapat">✕</button></div>
+  <div class="setting"><label for="model">Ücretsiz model</label><p>Otomatik seçim veya OpenRouter'daki mevcut ücretsiz modeller.</p><select id="model"><option value="openrouter/free">Otomatik · OpenRouter Free</option></select><button class="text-btn" id="refresh-models" type="button">Model listesini yenile</button></div>
+  <div class="setting"><label for="api-key">Kişisel API anahtarı (isteğe bağlı)</label><p>Vercel üzerinde paylaşılan anahtar varsa buna gerek yok. Yerelde denemek için kişisel anahtarını gir. Anahtar yalnızca sekme oturumunda tutulur; sohbet isteği doğrudan OpenRouter'a gider.</p><div class="key-row"><input id="api-key" type="password" autocomplete="off" placeholder="sk-or-v1-…"><button class="small-btn" type="button" id="toggle-key" aria-label="Anahtarı göster veya gizle">Göster</button></div><a href="https://openrouter.ai/settings/keys" target="_blank" rel="noopener noreferrer">OpenRouter'dan anahtar oluştur ↗</a></div>
+  <div class="setting"><label for="theme">Görünüm</label><select id="theme"><option value="dark">Koyu</option><option value="light">Açık</option><option value="system">Sistem</option></select></div>
+  <div class="setting danger-zone"><strong>Verilerin</strong><p>Sohbetler bu tarayıcıda tutulur. Yapay zekâ yanıtı için konuşmanın ilgili kısmı OpenRouter'a ve seçilen model sağlayıcısına gönderilir.</p><button id="export" class="outline-btn" type="button">Sohbeti TXT indir</button><button id="clear-all" class="outline-btn danger" type="button">Tüm sohbetleri sil</button></div>
+  <p class="dialog-foot">İLEFBot resmî BAİBÜ sistemi değildir. Akademik işlemleri resmî duyurularla doğrula.</p>
+</dialog>
 </body>
 </html>
