@@ -1,364 +1,101 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>İLEFBot — Bakımda</title>
-
-    <style>
-        :root {
-            --green: #2f7d46;
-            --green-light: #6ca67b;
-            --text: #171917;
-            --muted: #777b78;
-            --border: rgba(30, 40, 32, .08);
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        html, body {
-            width: 100%;
-            height: 100%;
-        }
-
-        body {
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            background:
-                linear-gradient(
-                    rgba(30, 70, 40, .035) 1px,
-                    transparent 1px
-                ),
-                linear-gradient(
-                    90deg,
-                    rgba(30, 70, 40, .035) 1px,
-                    transparent 1px
-                ),
-                #fafbf9;
-
-            background-size: 48px 48px;
-
-            color: var(--text);
-            font-family:
-                Inter,
-                -apple-system,
-                BlinkMacSystemFont,
-                "Segoe UI",
-                sans-serif;
-        }
-
-        /* Ambient glow */
-
-        body::before {
-            content: "";
-            position: fixed;
-            width: 650px;
-            height: 650px;
-            border-radius: 50%;
-
-            background: radial-gradient(
-                circle,
-                rgba(47, 125, 70, .10) 0%,
-                rgba(47, 125, 70, .045) 35%,
-                transparent 70%
-            );
-
-            filter: blur(20px);
-            pointer-events: none;
-        }
-
-        .page {
-            position: relative;
-            z-index: 1;
-
-            width: min(680px, 90vw);
-            text-align: center;
-
-            animation: appear .9s cubic-bezier(.2,.8,.2,1);
-        }
-
-        /* Logo */
-
-        .logo-wrap {
-            position: relative;
-
-            width: 148px;
-            height: 148px;
-
-            margin: 0 auto 42px;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .logo-wrap::before {
-            content: "";
-
-            position: absolute;
-            inset: -18px;
-
-            border: 1px solid rgba(47, 125, 70, .10);
-            border-radius: 50%;
-
-            animation: pulse 3s ease-in-out infinite;
-        }
-
-        .logo-wrap::after {
-            content: "";
-
-            position: absolute;
-            inset: -34px;
-
-            border: 1px solid rgba(47, 125, 70, .045);
-            border-radius: 50%;
-        }
-
-        .logo {
-            width: 128px;
-            height: 128px;
-
-            object-fit: contain;
-
-            filter:
-                drop-shadow(0 12px 25px rgba(47, 125, 70, .14));
-        }
-
-        /* Text */
-
-        .eyebrow {
-            display: inline-flex;
-            align-items: center;
-            gap: 9px;
-
-            margin-bottom: 20px;
-
-            color: var(--green);
-
-            font-size: 12px;
-            font-weight: 600;
-            letter-spacing: .16em;
-            text-transform: uppercase;
-        }
-
-        .eyebrow span {
-            width: 6px;
-            height: 6px;
-
-            border-radius: 50%;
-            background: var(--green);
-
-            box-shadow: 0 0 0 5px rgba(47, 125, 70, .08);
-
-            animation: blink 2s ease-in-out infinite;
-        }
-
-        h1 {
-            font-size: clamp(42px, 7vw, 72px);
-            line-height: .98;
-            letter-spacing: -.055em;
-            font-weight: 650;
-
-            margin-bottom: 22px;
-        }
-
-        h1 strong {
-            color: var(--green);
-            font-weight: inherit;
-        }
-
-        .description {
-            max-width: 510px;
-            margin: 0 auto;
-
-            color: var(--muted);
-
-            font-size: 16px;
-            line-height: 1.7;
-            letter-spacing: -.01em;
-        }
-
-        /* Progress */
-
-        .progress {
-            width: 240px;
-            height: 3px;
-
-            margin: 36px auto 0;
-
-            overflow: hidden;
-
-            border-radius: 999px;
-            background: rgba(47, 125, 70, .10);
-        }
-
-        .progress::before {
-            content: "";
-
-            display: block;
-
-            width: 42%;
-            height: 100%;
-
-            border-radius: inherit;
-            background: var(--green);
-
-            animation: progress 2.4s ease-in-out infinite;
-        }
-
-        /* Footer */
-
-        footer {
-            position: fixed;
-            z-index: 2;
-
-            left: 0;
-            bottom: 30px;
-
-            width: 100%;
-
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 12px;
-
-            color: #a1a5a2;
-
-            font-size: 11px;
-            letter-spacing: .08em;
-            text-transform: uppercase;
-        }
-
-        footer::before,
-        footer::after {
-            content: "";
-
-            width: 28px;
-            height: 1px;
-
-            background: var(--border);
-        }
-
-        /* Animations */
-
-        @keyframes appear {
-            from {
-                opacity: 0;
-                transform: translateY(18px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes pulse {
-            0%, 100% {
-                transform: scale(1);
-                opacity: .7;
-            }
-
-            50% {
-                transform: scale(1.04);
-                opacity: 1;
-            }
-        }
-
-        @keyframes blink {
-            0%, 100% {
-                opacity: .45;
-            }
-
-            50% {
-                opacity: 1;
-            }
-        }
-
-        @keyframes progress {
-            0% {
-                transform: translateX(-130%);
-            }
-
-            50% {
-                transform: translateX(110%);
-            }
-
-            100% {
-                transform: translateX(280%);
-            }
-        }
-
-        @media (max-width: 600px) {
-            .logo-wrap {
-                width: 120px;
-                height: 120px;
-                margin-bottom: 34px;
-            }
-
-            .logo {
-                width: 105px;
-                height: 105px;
-            }
-
-            h1 {
-                font-size: 45px;
-            }
-
-            .description {
-                font-size: 15px;
-                padding: 0 10px;
-            }
-
-            footer {
-                bottom: 20px;
-            }
-        }
-    </style>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#195c40"><meta name="description" content="İLEFBot: BAİBÜ İletişim Fakültesi öğrencileri için çevrimdışı rehber.">
+<title>İLEFBot — Öğrenci Rehberi</title>
+<style>
+:root{font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;color:#183027;background:#f3f7f3;font-synthesis:none}*{box-sizing:border-box}
+body{margin:0;min-height:100dvh}button,textarea{font:inherit}button{cursor:pointer}button:focus-visible,textarea:focus-visible{outline:3px solid #72bd94;outline-offset:3px}
+.app{max-width:1100px;min-height:100dvh;margin:auto;display:grid;grid-template-columns:295px minmax(0,1fr);box-shadow:0 0 50px #163b2010}
+aside{background:#154d36;color:#fff;padding:32px 24px;display:flex;flex-direction:column;gap:30px}
+.brand{font-weight:800;font-size:1.8rem;letter-spacing:-.04em}.brand span{color:#b3dfbf}.aside-copy{color:#d2e7d8;line-height:1.7;font-size:.94rem}
+.caption{font-size:.72rem;text-transform:uppercase;letter-spacing:.15em;color:#b5d5c1;margin-bottom:14px}
+.topics{display:grid;gap:9px}.topic{background:#ffffff13;border:1px solid #ffffff30;color:#fff;padding:13px 15px;text-align:left;border-radius:13px}.topic:hover{background:#ffffff26}
+.privacy{margin-top:auto;font-size:.8rem;color:#d2e7d8;line-height:1.6}
+main{min-width:0;min-height:100dvh;display:flex;flex-direction:column;background:#fcfdfb}
+header{padding:24px 30px;border-bottom:1px solid #e7ebe7;display:flex;align-items:center;justify-content:space-between;gap:12px}
+header h1{font-size:1.14rem;margin:0}header p{font-size:.78rem;color:#65766b;margin:5px 0 0}.badge{font-size:.72rem;background:#e4f4e7;color:#276b45;padding:8px 12px;border-radius:30px;white-space:nowrap}
+.chat{flex:1;overflow-y:auto;min-height:200px;max-height:calc(100dvh - 205px);padding:32px 30px;display:flex;flex-direction:column;gap:18px;scroll-behavior:smooth}
+.message{max-width:min(85%,660px);border-radius:18px;padding:15px 18px;line-height:1.6;font-size:.95rem;white-space:pre-wrap;overflow-wrap:anywhere}
+.message.bot{background:#f0f4ef;align-self:flex-start;border-bottom-left-radius:5px}.message.user{background:#195c40;color:white;align-self:flex-end;border-bottom-right-radius:5px}
+.message small{display:block;margin-bottom:5px;opacity:.65;font-size:.71rem;font-weight:700}
+.composer{padding:16px 30px 24px;border-top:1px solid #e7ebe7;background:#fff}
+.input-line{display:flex;align-items:end;gap:10px}.input-line textarea{flex:1;min-width:0;resize:vertical;min-height:52px;max-height:160px;padding:15px;border:1px solid #d7e1d9;border-radius:14px;background:#fbfdfb;color:#183027}
+.send{background:#195c40;color:#fff;border:0;border-radius:13px;padding:16px 20px;font-weight:700;min-height:52px}.send:hover{background:#24734e}
+.tools{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-top:12px}.tools button{background:none;border:0;color:#41634b;font-size:.78rem;padding:3px}.tools button:hover{text-decoration:underline}.tools p{margin:0 0 0 auto;color:#718075;font-size:.72rem}
+@media(max-width:720px){.app{display:flex;flex-direction:column}aside{padding:18px;gap:12px}.brand{font-size:1.4rem}.aside-copy,.caption,.privacy{display:none}.topics{display:flex;overflow-x:auto;gap:8px}.topic{white-space:nowrap;flex:none;padding:10px 12px;font-size:.8rem}main{min-height:calc(100dvh - 126px)}header{padding:16px}.chat{max-height:none;padding:20px 16px;min-height:300px}.message{max-width:94%}.composer{padding:12px 16px 18px}.tools p{margin-left:0;width:100%}}
+@media(prefers-reduced-motion:reduce){.chat{scroll-behavior:auto}}
+</style>
 </head>
-
 <body>
-
-    <main class="page">
-
-        <div class="logo-wrap">
-            <img
-                class="logo"
-                src="https://i.hizliresim.com/ar4mbl6.png"
-                alt="İLEFBot"
-            >
-        </div>
-
-        <div class="eyebrow">
-            <span></span>
-            BAKIMDA
-        </div>
-
-        <h1>
-            İLEFBot<br>
-            <strong>yenileniyor.</strong>
-        </h1>
-
-        <p class="description">
-            Daha iyi bir deneyim için İLEFBot'u baştan geliştiriyoruz.
-            Yeni sürüm üzerinde çalışmalar devam ediyor.
-        </p>
-
-        <div class="progress"></div>
-
-    </main>
-
-    <footer>
-        Murat Özçelik | Bolu Abant İzzet Baysal Üniversitesi İletişim Fakültesi
-    </footer>
-
+<div class="app">
+<aside aria-label="Konu başlıkları">
+<div class="brand">İLEF<span>Bot.</span></div>
+<p class="aside-copy">İletişim Fakültesi öğrencileri için sade bir başlangıç noktası. Sorunu yaz veya bir konu seç.</p>
+<div><div class="caption">Hızlı konular</div><nav class="topics" aria-label="Önerilen sorular">
+<button class="topic" data-question="Ders kaydı nasıl yapılır?">Ders kaydı</button>
+<button class="topic" data-question="Erasmus hakkında bilgi">Erasmus</button>
+<button class="topic" data-question="Staj hakkında bilgi">Staj</button>
+<button class="topic" data-question="Akademik takvim nerede?">Akademik takvim</button>
+<button class="topic" data-question="Danışmanıma nasıl ulaşırım?">Akademik danışman</button>
+</nav></div><p class="privacy">🔒 Mesajlar yalnızca bu tarayıcıda saklanır. Bu araç resmî üniversite duyurularının yerine geçmez.</p>
+</aside>
+<main>
+<header><div><h1>İLEFBot ile sohbet</h1><p>BAİBÜ İletişim Fakültesi • Bağımsız öğrenci rehberi</p></div><span class="badge">API gerektirmez</span></header>
+<section class="chat" id="chat" role="log" aria-label="Sohbet mesajları" aria-live="polite" aria-relevant="additions"></section>
+<form class="composer" id="form"><div class="input-line"><textarea id="question" aria-label="Mesajın" maxlength="1000" rows="1" placeholder="Bir şey sor..." required></textarea><button class="send" type="submit">Gönder</button></div>
+<div class="tools"><button type="button" id="export">Sohbeti TXT olarak indir</button><button type="button" id="clear">Geçmişi temizle</button><p>Enter: gönder • Shift+Enter: yeni satır</p></div></form>
+</main></div>
+<script>
+(() => {
+'use strict';
+const STORAGE_KEY='ilefbot.chat.v1',MAX_MESSAGES=100;
+const chat=document.getElementById('chat'),form=document.getElementById('form'),input=document.getElementById('question');
+const normalize=text=>text.toLocaleLowerCase('tr-TR').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/ı/g,'i');
+const knowledge=[
+{terms:['ders kaydi','ders secimi','ders ekle','ubys','kayit yenile'],answer:'Ders kaydı ve danışman onayı için üniversitenin güncel öğrenci bilgi sistemi (UBYS) duyurularını kontrol et. Dersin açılması, ön koşullar ve seçmeli kontenjanları dönemden döneme değişebilir. Kendi müfredatını ve danışmanını esas al.'},
+{terms:['erasmus','yurtdisi','degisim programi'],answer:'Erasmus başvuruları, anlaşmalı kurumlar, dil koşulları ve hibe takvimi için BAİBÜ Uluslararası İlişkiler Koordinatörlüğünün güncel ilanlarına bak. Bölüm Erasmus koordinatörünle ders eşleştirmelerini önceden görüş.'},
+{terms:['staj','is yeri egitimi'],answer:'Stajın zorunlu olup olmadığı, süresi, evrakı ve teslim takvimi programa göre değişebilir. Kendi bölümünün güncel staj yönergesini ve bölüm sekreterliğinin duyurularını kontrol et.'},
+{terms:['akademik takvim','sinav tarihi','final tarihi','butunleme','vize haftasi'],answer:'Ders başlangıcı, sınav haftaları ve kayıt tarihleri için BAİBÜ resmî akademik takvimini kontrol et. Bölüme özgü sınav programı ayrıca duyurulabilir.'},
+{terms:['danisman','akademik danisman','hocama ulas'],answer:'Akademik danışman bilgini öğrenci bilgi sisteminden veya bölüm sekreterliğinden doğrula. Ders seçimi, intibak ve mezuniyet koşullarında danışmanının yönlendirmesini esas al.'},
+{terms:['transkript','not dokumu','ortalama','agno'],answer:'Transkript ve not ortalaması için öğrenci bilgi sistemindeki kişisel kayıtlarını incele. İtiraz veya belge talebinde öğrenci işleri ve ilgili bölümle iletişime geç.'},
+{terms:['mezuniyet','bitirme','diploma'],answer:'Mezuniyet için gerekli kredi, ders ve uygulama koşulları giriş yılına ve programa bağlı olabilir. Kendi müfredatını, transkriptini ve öğrenci işlerinin güncel açıklamalarını birlikte kontrol et.'},
+{terms:['iletisim','adres','telefon','sekreterlik'],answer:'Güncel bölüm iletişim bilgileri ve duyurular için BAİBÜ resmî web sitesinden İletişim Fakültesi sayfasına ulaş. Telefon ve personel bilgilerini burada sabit tutmuyoruz; değişebilir.'}
+];
+function reply(text){
+const q=normalize(text);
+const matched=knowledge.map(entry=>({entry,score:entry.terms.reduce((score,term)=>score+(q.includes(term)?term.length:0),0)})).sort((a,b)=>b.score-a.score)[0];
+if(matched&&matched.score>0)return matched.entry.answer;
+if(/^(merhaba|selam|hey|iyi gunler)[!.\s]*$/.test(q.trim()))return 'Merhaba! Ders kaydı, Erasmus, staj, akademik takvim veya danışmanlık hakkında sorabilirsin.';
+return 'Bu konuda doğrulanmış bir yanıtım henüz yok. Ders kaydı, Erasmus, staj, akademik takvim ve danışmanlık konularını deneyebilirsin. Resmî ve güncel bilgi için BAİBÜ duyurularına başvur.';
+}
+const welcome={role:'bot',text:'Merhaba! Ben İLEFBot. Ders kaydı, Erasmus, staj, akademik takvim veya danışmanlık hakkında sorabilirsin. Yanıtlarım genel rehberlik sağlar; güncel koşulları resmî kaynaklardan doğrula.'};
+function load(){
+try{const data=JSON.parse(localStorage.getItem(STORAGE_KEY));if(Array.isArray(data))return data.filter(m=>m&&(m.role==='bot'||m.role==='user')&&typeof m.text==='string'&&m.text.length<=3000).slice(-MAX_MESSAGES);}
+catch(error){console.warn('Sohbet geçmişi okunamadı.',error);}return [];
+}
+let messages=load();if(!messages.length)messages=[welcome];
+function save(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(messages));}catch(error){console.warn('Sohbet geçmişi kaydedilemedi.',error);}}
+function renderMessage(message){
+const el=document.createElement('article');el.className='message '+message.role;
+const label=document.createElement('small');label.textContent=message.role==='bot'?'İLEFBot':'Sen';
+const body=document.createElement('div');body.textContent=message.text;el.append(label,body);chat.appendChild(el);chat.scrollTop=chat.scrollHeight;
+}
+messages.forEach(renderMessage);
+function add(role,text){const message={role,text};messages.push(message);messages=messages.slice(-MAX_MESSAGES);renderMessage(message);save();}
+function submit(text){const value=text.trim().slice(0,1000);if(!value)return;add('user',value);add('bot',reply(value));input.value='';input.focus();}
+form.addEventListener('submit',event=>{event.preventDefault();submit(input.value);});
+input.addEventListener('keydown',event=>{if(event.key==='Enter'&&!event.shiftKey&&!event.isComposing){event.preventDefault();submit(input.value);}});
+document.querySelectorAll('[data-question]').forEach(button=>button.addEventListener('click',()=>submit(button.dataset.question)));
+document.getElementById('clear').addEventListener('click',()=>{if(!confirm('Bu tarayıcıdaki tüm İLEFBot sohbet geçmişi silinsin mi?'))return;messages=[welcome];chat.replaceChildren();messages.forEach(renderMessage);save();});
+document.getElementById('export').addEventListener('click',()=>{
+const content=messages.map(message=>(message.role==='bot'?'İLEFBot: ':'Sen: ')+message.text).join('\n\n');
+const url=URL.createObjectURL(new Blob(['\uFEFF'+content],{type:'text/plain;charset=utf-8'}));
+const a=document.createElement('a');a.href=url;a.download='ilefbot-sohbet.txt';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+});
+save();
+})();
+</script>
 </body>
 </html>
